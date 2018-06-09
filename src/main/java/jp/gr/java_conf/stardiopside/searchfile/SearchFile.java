@@ -3,15 +3,23 @@ package jp.gr.java_conf.stardiopside.searchfile;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -23,7 +31,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -45,9 +52,9 @@ import javax.swing.border.LineBorder;
  * ファイル検索を行うアプリケーションのフレーム
  */
 @SuppressWarnings("serial")
-public class SearchFile extends JFrame
-	implements ActionListener, Runnable, MenuHintListener
-{
+public class SearchFile extends JFrame implements MenuHintListener {
+    private static final Logger logger = Logger.getLogger(SearchFile.class.getName());
+
 	JLabel lblDir = new JLabel("ディレクトリ名");
 	JTextField txtDir = new JTextField(21);
 	JButton btnDir = new JButton("ディレクトリの指定");
@@ -72,13 +79,14 @@ public class SearchFile extends JFrame
 
     private Map<String, JRadioButtonMenuItem> lookAndFeelSelectedButtons = java.util.Collections.emptyMap();
 
-	DefaultListModel listFileData = new DefaultListModel();
-	JList listFile = new JList(listFileData);
+    private DefaultListModel<JCheckBox> listFileData = new DefaultListModel<>();
+    private JCheckBoxList listFile = new JCheckBoxList(listFileData);
 
 	private JLabel labelStatusBar = new JLabel();
 	private String strStatusBar = "レディ";
 
-	private boolean flagSearching = false;	// 現在検索中であるかを示すフラグ
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private boolean isSearching = false;
 
 	public SearchFile(String title){
 		super(title);
@@ -150,14 +158,127 @@ public class SearchFile extends JFrame
 		groupRadio.add(radioWildCard);
 		radioRegular.setSelected(true);
 
-		// アクションリスナーを追加する
-		btnDir.addActionListener(this);
-		btnSearch.addActionListener(this);
-		btnClear.addActionListener(this);
-		btnCopy.addActionListener(this);
-		btnSelectAll.addActionListener(this);
-		btnSelectedClear.addActionListener(this);
-		btnDeleteFile.addActionListener(this);
+        // アクションリスナーを追加する
+        btnDir.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setSelectedFile(new File(txtDir.getText()));
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                txtDir.setText(chooser.getSelectedFile().getPath());
+            }
+        });
+
+        btnSearch.addActionListener(e -> {
+            if (isSearching) {
+                // フラグを降ろし検索を中止する
+                btnSearch.setEnabled(false);
+                isSearching = false;
+                return;
+            }
+
+            // 指定されたディレクトリが存在するかを調べる
+            Path fileDir = Paths.get(txtDir.getText());
+            if (!Files.isDirectory(fileDir)) {
+                setStatusBarText("ディレクトリが存在しません");
+                return;
+            }
+
+            // 検索パターンの正規表現を生成する
+            Pattern searchPattern;
+            int flags = 0;
+            if (!chkCase.isSelected()) {
+                flags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+            }
+            try {
+                searchPattern = Pattern.compile(txtFile.getText(), flags);
+            } catch (PatternSyntaxException ex) {
+                JOptionPane.showMessageDialog(this, "正規表現の構文にエラーがあります", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (listFileData.getSize() == 0 || JOptionPane.showConfirmDialog(this, "検索結果は消去されます。処理を続行してもよろしいですか？",
+                    "リストの消去", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                // 現在のリストをクリアする
+                listFileData.clear();
+
+                // 検索中を示すフラグを立てる
+                setSearchingFlag(true);
+
+                // 別スレッドで検索を開始する
+                executorService.submit(() -> {
+                    try {
+                        Files.walkFileTree(fileDir, new FileVisitor<>() {
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                                    throws IOException {
+                                SwingUtilities.invokeLater(() -> {
+                                    setStatusBarText(dir + " を検索中...");
+                                });
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                if (searchPattern.matcher(file.getFileName().toString()).matches()) {
+                                    SwingUtilities.invokeLater(() -> {
+                                        listFileData.addElement(new JCheckBox(file.toAbsolutePath().toString()));
+                                    });
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            @Override
+                            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                                logger.log(Level.WARNING, exc.getMessage(), exc);
+                                return FileVisitResult.CONTINUE;
+                            };
+
+                            @Override
+                            public FileVisitResult postVisitDirectory(Path dir, IOException attrs) throws IOException {
+                                return isSearching ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
+                            }
+                        });
+
+                        SwingUtilities.invokeLater(() -> {
+                            if (listFileData.isEmpty()) {
+                                setStatusBarText("ファイルが見つかりませんでした");
+                            } else {
+                                setStatusBarText(listFileData.size() + "個のファイルが見つかりました");
+                            }
+                        });
+                    } catch (IOException ex) {
+                        logger.log(Level.WARNING, ex.getMessage(), ex);
+                        SwingUtilities.invokeLater(() -> setStatusBarText("ファイル検索中にエラーが発生しました"));
+                    } finally {
+                        SwingUtilities.invokeLater(() -> {
+                            // 検索中を示すフラグを降ろす
+                            setSearchingFlag(false);
+                        });
+                    }
+                });
+            }
+        });
+
+        btnClear.addActionListener(e -> {
+            if (JOptionPane.showConfirmDialog(this, "検索結果は消去されます。処理を続行してもよろしいですか？", "リストの消去",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                // リストを初期化する
+                listFileData.clear();
+                setStatusBarText("リストを初期化しました");
+            }
+        });
+
+        btnCopy.addActionListener(e -> {
+        });
+
+        btnSelectAll.addActionListener(e -> {
+        });
+
+        btnSelectedClear.addActionListener(e -> {
+        });
+
+        btnDeleteFile.addActionListener(e -> {
+        });
 
 		// ツールチップを設定する
 		btnDir.setToolTipText("検索するディレクトリを指定する");
@@ -180,7 +301,6 @@ public class SearchFile extends JFrame
 		/*
 		 * リストコントロールの設定
 		 */
-		listFile.setCellRenderer(new CheckListCellRenderer());
 		JScrollPane scrollList = new JScrollPane(listFile);
 		scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -208,7 +328,7 @@ public class SearchFile extends JFrame
         menuFileExit.setMnemonic(KeyEvent.VK_X);
         menuFileExit.setHint("アプリケーションを終了する");
         menuFile.add(menuFileExit);
-        menuFileExit.addActionListener(this);
+        menuFileExit.addActionListener(e -> System.exit(0));
         menuBar.add(menuFile);
 
         /*
@@ -308,187 +428,22 @@ public class SearchFile extends JFrame
 		panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
 	}
 
-	/**
-	 * アクションイベント
-	 */
-	public void actionPerformed(ActionEvent e){
-		if(e.getSource() == btnDir){
-			JFileChooser chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setSelectedFile(new File(txtDir.getText()));
-			if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-				txtDir.setText(chooser.getSelectedFile().getPath());
-			}
+    /**
+     * フラグを設定し、それに伴いコンポーネントの状態を変化させる
+     */
+    private void setSearchingFlag(boolean isSearching) {
+        // フラグを設定する
+        this.isSearching = isSearching;
 
-		}else if(e.getSource() == btnSearch){
-			if(flagSearching){
-				// フラグを降ろし検索を中止する
-				btnSearch.setEnabled(false);
-				flagSearching = false;
-			}else if(listFileData.getSize() == 0 ||
-					JOptionPane.showConfirmDialog(this,
-						"検索結果は消去されます。処理を続行してもよろしいですか？",
-						"リストの消去",
-						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-				// スレッドを作成し、検索を開始する
-				new Thread(this).start();
-			}
-
-		}else if(e.getSource() == btnClear){
-			if(JOptionPane.showConfirmDialog(this,
-					"検索結果は消去されます。処理を続行してもよろしいですか？",
-					"リストの消去",
-					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-				// リストを初期化する
-				listFileData.clear();
-				setStatusBarText("リストを初期化しました");
-			}
-
-		}else if(e.getSource() == btnCopy){
-
-		}else if(e.getSource() == menuFileExit){
-			System.exit(0);
-		}
-	}
-
-	/**
-	 * スレッドを実行する
-	 */
-	public void run(){
-		try{
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
-					// 検索中を示すフラグを立てる
-					setSearchingFlag(true);
-
-					// 現在のリストをクリアする
-					listFileData.clear();
-				}
-			});
-
-			// 指定されたディレクトリが存在するかを調べる
-			File fileDir = new File(txtDir.getText());
-			if(!fileDir.isDirectory()){
-				SwingUtilities.invokeLater(new Runnable(){
-					public void run(){
-						setStatusBarText("ディレクトリが存在しません");
-					}
-				});
-				return;
-			}
-
-			// ファイルを検索する
-			final int numFiles = RecursiveSearch(fileDir, txtFile.getText(), listFileData);
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
-					if(numFiles == 0){
-						setStatusBarText("ファイルが見つかりませんでした");
-					}else{
-						setStatusBarText(numFiles + "個のファイルが見つかりました");
-					}
-				}
-			});
-		}
-		finally{
-			SwingUtilities.invokeLater(new Runnable(){
-				public void run(){
-					// 検索中を示すフラグを降ろす
-					setSearchingFlag(false);
-				}
-			});
-		}
-	}
-
-	/**
-	 * 再帰的にファイル検索を行い、見つかったファイル数を返す
-	 */
-	private int RecursiveSearch(File dir, String strPattern, DefaultListModel list){
-		int num = 0;	// 検索されたファイル数
-
-		final String dirPath = dir.getAbsolutePath();
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				// ステータスバーのテキストを設定する
-				setStatusBarText(dirPath + " を検索中...");
-			}
-		});
-
-		try{
-			// dir内のファイルを検索する
-			int flags = 0;
-			if(!chkCase.isSelected()){
-				flags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-			}
-			final Pattern pattern = Pattern.compile(strPattern, flags);
-			final File[] files = dir.listFiles(new FileFilter(){
-				public boolean accept(File pathname){
-					if(pathname.isDirectory()){
-						return true;
-					}else{
-						return pattern.matcher(pathname.getName()).matches();
-					}
-				}
-			});
-			if(files == null){
-				return 0;
-			}
-
-			// dirのサブディレクトリを再帰的に検索する
-			for(int i = 0 ; i < files.length ; i++){
-				if(files[i].isDirectory()){
-					num += RecursiveSearch(files[i], strPattern, list);
-				}else{
-					final DefaultListModel param_list = list;
-					final int param_i = i;
-					SwingUtilities.invokeLater(new Runnable(){
-						public void run(){
-							param_list.addElement(files[param_i].getAbsolutePath());
-						}
-					});
-					num++;
-				}
-
-				// フラグが降ろされている場合は検索を中止する
-				if(!flagSearching)
-					break;
-			}
-		}
-		catch(PatternSyntaxException e){
-			try{
-				JOptionPane.showMessageDialog(this,
-					"正規表現の構文にエラーがあります", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			}
-			catch(HeadlessException exc){
-				e.printStackTrace();
-			}
-		}
-		catch(IllegalArgumentException e){
-			e.printStackTrace();
-		}
-		catch(SecurityException e){
-			e.printStackTrace();
-		}
-
-		return num;
-	}
-
-	/**
-	 * フラグを設定し、それに伴いコンポーネントの状態を変化させる
-	 */
-	protected void setSearchingFlag(boolean flag){
-		// フラグを設定する
-		flagSearching = flag;
-
-		// コンポーネントの状態を変える
-		if(flag){
-			btnSearch.setText("検索中止");
-		}else{
-			btnSearch.setText("検索開始");
-			btnSearch.setEnabled(true);
-		}
-		btnClear.setEnabled(!flag);
-	}
+        // コンポーネントの状態を変える
+        if (isSearching) {
+            btnSearch.setText("検索中止");
+        } else {
+            btnSearch.setText("検索開始");
+            btnSearch.setEnabled(true);
+        }
+        btnClear.setEnabled(!isSearching);
+    }
 
 	/**
 	 * ステータスバーのテキストを変更する
