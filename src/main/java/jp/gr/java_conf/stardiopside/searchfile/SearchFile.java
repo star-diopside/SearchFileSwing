@@ -1,3 +1,5 @@
+package jp.gr.java_conf.stardiopside.searchfile;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;

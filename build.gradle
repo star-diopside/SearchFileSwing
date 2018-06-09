@@ -12,7 +12,7 @@ tasks.withType(JavaCompile) {
 
 jar {
     manifest {
-        attributes("Main-Class": "SearchFile")
+        attributes("Main-Class": "jp.gr.java_conf.stardiopside.searchfile.SearchFile")
     }
     archiveName = "SearchFile.jar"
 }
