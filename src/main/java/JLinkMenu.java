@@ -1,7 +1,7 @@
 import javax.swing.*;
 
 /**
- * メニュー選択とリンクさせるJMenu
+ * 繝｡繝九Η繝ｼ驕ｸ謚槭→繝ｪ繝ｳ繧ｯ縺輔○繧徽Menu
  */
 public class JLinkMenu extends JMenu
 {

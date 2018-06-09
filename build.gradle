@@ -1,0 +1,18 @@
+apply plugin: "java-library"
+
+group = "jp.gr.java_conf.stardiopside.searchfile"
+
+repositories {
+    jcenter()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    manifest {
+        attributes("Main-Class": "SearchFile")
+    }
+    archiveName = "SearchFile.jar"
+}

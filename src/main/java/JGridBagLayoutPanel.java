@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * ƒŒƒCƒAƒEƒgƒ}ƒl[ƒWƒƒ‚ªGridBagLayoutŒÅ’è‚ÌJPanel
+ * ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆãƒãƒãƒ¼ã‚¸ãƒ£ãŒGridBagLayoutå›ºå®šã®JPanel
  */
 public class JGridBagLayoutPanel extends JPanel
 {
@@ -20,7 +20,7 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * ‰Šú‰»ˆ—‚Ì‚½‚ß‚ÉƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çŒÄ‚Î‚ê‚é
+	 * åˆæœŸåŒ–å‡¦ç†ã®ãŸã‚ã«ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 	 */
 	private void init(){
 		super.setLayout(layout);
@@ -31,7 +31,7 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * ‚±‚Ìƒƒ\ƒbƒh‚Í‰½‚às‚í‚È‚¢ (ƒŒƒCƒAƒEƒgƒ}ƒl[ƒWƒƒ‚ğ•ÏX‚Å‚«‚È‚¢)
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ä½•ã‚‚è¡Œã‚ãªã„ (ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆãƒãƒãƒ¼ã‚¸ãƒ£ã‚’å¤‰æ›´ã§ããªã„)
 	 */
 	public void setLayout(LayoutManager mgr){
 	}
@@ -67,7 +67,7 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * •¡”‚Ìƒpƒ‰ƒ[ƒ^‚ğw’è‚µ‚ÄƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á‚·‚é
+	 * è¤‡æ•°ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’æŒ‡å®šã—ã¦ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹
 	 */
 	public Component add(Component comp, int gridwidth, int gridheight, int anchor){
 		setGridWidth(gridwidth);
@@ -79,25 +79,25 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * •¡”‚Ìƒpƒ‰ƒ[ƒ^‚ğw’è‚µ‚ÄƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á‚·‚é
-	 * ƒCƒ“ƒZƒbƒg‚Íƒpƒ‰ƒ[ƒ^‚É“n‚³‚ê‚½’l‚Éˆê“I‚É•ÏX‚³‚ê‚é‚ªA‚±‚Ìƒƒ\ƒbƒhI—¹‚ÉŒ³‚É–ß‚³‚ê‚é
+	 * è¤‡æ•°ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’æŒ‡å®šã—ã¦ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹
+	 * ã‚¤ãƒ³ã‚»ãƒƒãƒˆã¯ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã«æ¸¡ã•ã‚ŒãŸå€¤ã«ä¸€æ™‚çš„ã«å¤‰æ›´ã•ã‚Œã‚‹ãŒã€ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰çµ‚äº†æ™‚ã«å…ƒã«æˆ»ã•ã‚Œã‚‹
 	 */
 	public Component add(Component comp, int gridwidth, int gridheight, int anchor, Insets insets){
-		// Œ»İ‚ÌƒCƒ“ƒZƒbƒg‚ğˆê—Ìˆæ‚É•Û‘¶‚µAV‚½‚ÈƒCƒ“ƒZƒbƒg‚ğ“K—p‚·‚é
+		// ç¾åœ¨ã®ã‚¤ãƒ³ã‚»ãƒƒãƒˆã‚’ä¸€æ™‚é ˜åŸŸã«ä¿å­˜ã—ã€æ–°ãŸãªã‚¤ãƒ³ã‚»ãƒƒãƒˆã‚’é©ç”¨ã™ã‚‹
 		Insets tmp = getGridInsets();
 		setGridInsets(insets);
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á‚·‚é
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹
 		Component retComp = add(comp, gridwidth, gridheight, anchor);
 
-		// ƒCƒ“ƒZƒbƒg‚ğŒ³‚É–ß‚·
+		// ã‚¤ãƒ³ã‚»ãƒƒãƒˆã‚’å…ƒã«æˆ»ã™
 		setGridInsets(tmp);
 
 		return retComp;
 	}
 
 	/**
-	 * Œ»İ‚ÌƒZƒ‹‚ÌˆÊ’u‚ğİ’è‚·‚é
+	 * ç¾åœ¨ã®ã‚»ãƒ«ã®ä½ç½®ã‚’è¨­å®šã™ã‚‹
 	 */
 	public void setGridCell(int gridx, int gridy){
 		gridConstraints.gridx = gridx;
@@ -105,14 +105,14 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ”z’u‚·‚éƒZƒ‹‚ğ—ñ•ûŒü‚É1‚Âi‚ß‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’é…ç½®ã™ã‚‹ã‚»ãƒ«ã‚’åˆ—æ–¹å‘ã«1ã¤é€²ã‚ã‚‹
 	 */
 	public void nextGridX(){
 		gridConstraints.gridx++;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ”z’u‚·‚éƒZƒ‹‚ğs•ûŒü‚É1‚Âi‚ßA—ñ•ûŒü‚ğƒŠƒZƒbƒg‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’é…ç½®ã™ã‚‹ã‚»ãƒ«ã‚’è¡Œæ–¹å‘ã«1ã¤é€²ã‚ã€åˆ—æ–¹å‘ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 	 */
 	public void nextGridY(){
 		gridConstraints.gridx = 0;
@@ -120,56 +120,56 @@ public class JGridBagLayoutPanel extends JPanel
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì•\¦—Ìˆæ‚Ì1s‚ÌƒZƒ‹”‚ğæ“¾‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¡¨ç¤ºé ˜åŸŸã®1è¡Œã®ã‚»ãƒ«æ•°ã‚’å–å¾—ã™ã‚‹
 	 */
 	public int getGridWidth(){
 		return gridConstraints.gridwidth;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì•\¦—Ìˆæ‚Ì1s‚ÌƒZƒ‹”‚ğİ’è‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¡¨ç¤ºé ˜åŸŸã®1è¡Œã®ã‚»ãƒ«æ•°ã‚’è¨­å®šã™ã‚‹
 	 */
 	public void setGridWidth(int gridwidth){
 		gridConstraints.gridwidth = gridwidth;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì•\¦—Ìˆæ‚Ì1—ñ‚ÌƒZƒ‹”‚ğæ“¾‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¡¨ç¤ºé ˜åŸŸã®1åˆ—ã®ã‚»ãƒ«æ•°ã‚’å–å¾—ã™ã‚‹
 	 */
 	public int getGridHeight(){
 		return gridConstraints.gridheight;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì•\¦—Ìˆæ‚Ì1—ñ‚ÌƒZƒ‹”‚ğİ’è‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¡¨ç¤ºé ˜åŸŸã®1åˆ—ã®ã‚»ãƒ«æ•°ã‚’è¨­å®šã™ã‚‹
 	 */
 	public void setGridHeight(int gridheight){
 		gridConstraints.gridheight = gridheight;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì”z’uêŠ‚ğæ“¾‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®é…ç½®å ´æ‰€ã‚’å–å¾—ã™ã‚‹
 	 */
 	public int getGridAnchor(){
 		return gridConstraints.anchor;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì”z’uêŠ‚ğİ’è‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®é…ç½®å ´æ‰€ã‚’è¨­å®šã™ã‚‹
 	 */
 	public void setGridAnchor(int anchor){
 		gridConstraints.anchor = anchor;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌƒCƒ“ƒZƒbƒg‚ğæ“¾‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ã‚¤ãƒ³ã‚»ãƒƒãƒˆã‚’å–å¾—ã™ã‚‹
 	 */
 	public Insets getGridInsets(){
 		return gridConstraints.insets;
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌƒCƒ“ƒZƒbƒg‚ğİ’è‚·‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ã‚¤ãƒ³ã‚»ãƒƒãƒˆã‚’è¨­å®šã™ã‚‹
 	 */
 	public void setGridInsets(Insets insets){
 		gridConstraints.insets = insets;

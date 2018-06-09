@@ -6,26 +6,26 @@ import java.io.*;
 import java.util.regex.*;
 
 /**
- * ƒtƒ@ƒCƒ‹ŒŸõ‚ğs‚¤ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒtƒŒ[ƒ€
+ * ãƒ•ã‚¡ã‚¤ãƒ«æ¤œç´¢ã‚’è¡Œã†ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
  */
 public class SearchFile extends JFrame
 	implements ActionListener, Runnable, MenuLink
 {
-	JLabel lblDir = new JLabel("ƒfƒBƒŒƒNƒgƒŠ–¼");
+	JLabel lblDir = new JLabel("ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå");
 	JTextField txtDir = new JTextField(21);
-	JButton btnDir = new JButton("ƒfƒBƒŒƒNƒgƒŠ‚Ìw’è");
-	JLabel lblFile = new JLabel("ƒtƒ@ƒCƒ‹–¼");
+	JButton btnDir = new JButton("ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®æŒ‡å®š");
+	JLabel lblFile = new JLabel("ãƒ•ã‚¡ã‚¤ãƒ«å");
 	JTextField txtFile = new JTextField(21);
-	JRadioButton radioRegular = new JRadioButton("³‹K•\Œ»");
-	JRadioButton radioWildCard = new JRadioButton("ƒƒCƒ‹ƒhƒJ[ƒh");
-	JCheckBox chkCase = new JCheckBox("‘å•¶š/¬•¶š‚Ì‹æ•Ê‚ğs‚¤");
-	JButton btnSearch = new JButton("ŒŸõŠJn");
-	JButton btnClear = new JButton("ƒŠƒXƒg‚ÌƒNƒŠƒA");
-	JButton btnCopy = new JButton("ŒŸõŒ‹‰Ê‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[");
-	JButton btnSelectAll = new JButton("‚·‚×‚Ä‘I‘ğ");
-	JButton btnSelectedClear = new JButton("‘I‘ğ‰ğœ");
-	JButton btnDeleteFile = new JButton("‘I‘ğƒtƒ@ƒCƒ‹‚ğíœ");
-	JCheckBox chkDelete = new JCheckBox("íœ‚Éƒtƒ@ƒCƒ‹‚ğ‚²‚İ” ‚ÉˆÚ‚·");
+	JRadioButton radioRegular = new JRadioButton("æ­£è¦è¡¨ç¾");
+	JRadioButton radioWildCard = new JRadioButton("ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰");
+	JCheckBox chkCase = new JCheckBox("å¤§æ–‡å­—/å°æ–‡å­—ã®åŒºåˆ¥ã‚’è¡Œã†");
+	JButton btnSearch = new JButton("æ¤œç´¢é–‹å§‹");
+	JButton btnClear = new JButton("ãƒªã‚¹ãƒˆã®ã‚¯ãƒªã‚¢");
+	JButton btnCopy = new JButton("æ¤œç´¢çµæœã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼");
+	JButton btnSelectAll = new JButton("ã™ã¹ã¦é¸æŠ");
+	JButton btnSelectedClear = new JButton("é¸æŠè§£é™¤");
+	JButton btnDeleteFile = new JButton("é¸æŠãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤");
+	JCheckBox chkDelete = new JCheckBox("å‰Šé™¤æ™‚ã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã”ã¿ç®±ã«ç§»ã™");
 
 	JLinkMenu menuFile;
 	JLinkMenuItem menuFileExit;
@@ -43,9 +43,9 @@ public class SearchFile extends JFrame
 	JList listFile = new JList(listFileData);
 
 	private JLabel labelStatusBar = new JLabel();
-	private String strStatusBar = "ƒŒƒfƒB";
+	private String strStatusBar = "ãƒ¬ãƒ‡ã‚£";
 
-	// ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ÌƒNƒ‰ƒX–¼
+	// ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã®ã‚¯ãƒ©ã‚¹å
 	private static final String classMetal = "javax.swing.plaf.metal.MetalLookAndFeel";
 	private static final String classWin = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 	private static final String classMotif = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
@@ -53,39 +53,39 @@ public class SearchFile extends JFrame
 	private static final String classMac = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
 	private static final String classNimbus = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 
-	private boolean flagSearching = false;	// Œ»İŒŸõ’†‚Å‚ ‚é‚©‚ğ¦‚·ƒtƒ‰ƒO
+	private boolean flagSearching = false;	// ç¾åœ¨æ¤œç´¢ä¸­ã§ã‚ã‚‹ã‹ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°
 
 	public SearchFile(String title){
 		super(title);
 
-		initComponents();	// ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìİ’è
-		addMenuBar();		// ƒƒjƒ…[ƒo[‚Ìİ’è
-		addStatusBar();		// ƒXƒe[ƒ^ƒXƒo[‚Ìİ’è
+		initComponents();	// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¨­å®š
+		addMenuBar();		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®è¨­å®š
+		addStatusBar();		// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®è¨­å®š
 	}
 
 	public static void main(String[] args){
-		SearchFile frame = new SearchFile("ƒtƒ@ƒCƒ‹‚ÌŒŸõ");
+		SearchFile frame = new SearchFile("ãƒ•ã‚¡ã‚¤ãƒ«ã®æ¤œç´¢");
 
-		// ƒEƒBƒ“ƒhƒE‚Ì‘å‚«‚³‚ÆI—¹“®ì‚Ìİ’è
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å¤§ãã•ã¨çµ‚äº†å‹•ä½œã®è¨­å®š
 		frame.setLocation(10, 10);
 		frame.setSize(800, 550);
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		// ƒEƒBƒ“ƒhƒE‚ğ•\¦‚·‚é
+		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤ºã™ã‚‹
 		frame.setVisible(true);
 	}
 
 	/**
-	 * ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‰Šú‰»‚ğs‚¤
-	 * ‚±‚Ìƒƒ\ƒbƒh‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çŒÄ‚Î‚ê‚é
+	 * ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®åˆæœŸåŒ–ã‚’è¡Œã†
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 	 */
 	private void initComponents(){
 		/*
-		 * •¡”‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚ğŠÜ‚Şƒpƒlƒ‹‚ÌƒRƒ“ƒgƒ[ƒ‹‚Ìİ’è
+		 * è¤‡æ•°ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å«ã‚€ãƒ‘ãƒãƒ«ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®è¨­å®š
 		 */
 		JGridBagLayoutPanel panelSubComponents = new JGridBagLayoutPanel();
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ’Ç‰Á‚·‚é
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹
 		panelSubComponents.setGridInsets(new Insets(2, 8, 2, 8));
 		panelSubComponents.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
 		panelSubComponents.nextGridY();
@@ -114,16 +114,16 @@ public class SearchFile extends JFrame
 		panelSubComponents.nextGridY();
 		panelSubComponents.add(chkDelete, 2, 1, GridBagConstraints.WEST);
 
-		// ƒf[ƒ^‚ğİ’è‚·‚é
+		// ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
 		txtDir.setText(new File(".").getAbsoluteFile().getParent());
 
-		// ƒOƒ‹[ƒv‚Æ‰Šúó‘Ô‚ğİ’è‚·‚é
+		// ã‚°ãƒ«ãƒ¼ãƒ—ã¨åˆæœŸçŠ¶æ…‹ã‚’è¨­å®šã™ã‚‹
 		ButtonGroup groupRadio = new ButtonGroup();
 		groupRadio.add(radioRegular);
 		groupRadio.add(radioWildCard);
 		radioRegular.setSelected(true);
 
-		// ƒAƒNƒVƒ‡ƒ“ƒŠƒXƒi[‚ğ’Ç‰Á‚·‚é
+		// ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ãƒªã‚¹ãƒŠãƒ¼ã‚’è¿½åŠ ã™ã‚‹
 		btnDir.addActionListener(this);
 		btnSearch.addActionListener(this);
 		btnClear.addActionListener(this);
@@ -132,17 +132,17 @@ public class SearchFile extends JFrame
 		btnSelectedClear.addActionListener(this);
 		btnDeleteFile.addActionListener(this);
 
-		// ƒc[ƒ‹ƒ`ƒbƒv‚ğİ’è‚·‚é
-		btnDir.setToolTipText("ŒŸõ‚·‚éƒfƒBƒŒƒNƒgƒŠ‚ğw’è‚·‚é");
-		chkCase.setToolTipText("ƒtƒ@ƒCƒ‹–¼‚Ì‘å•¶š/¬•¶š‚ğ‹æ•Ê‚µ‚ÄŒŸõ‚ğs‚¤");
-		btnSearch.setToolTipText("ŒŸõ‚ğŠJn‚·‚é");
-		btnClear.setToolTipText("ŒŸõŒ‹‰Ê‚ğƒNƒŠƒA‚·‚é");
-		btnCopy.setToolTipText("ŒŸõŒ‹‰Ê‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚·‚é");
-		btnSelectAll.setToolTipText("ƒŠƒXƒg‚ğ‘S‘I‘ğó‘Ô‚É‚·‚é");
-		btnSelectedClear.setToolTipText("ƒŠƒXƒg‚Ì‘I‘ğó‘Ô‚ğ‰ğœ‚·‚é");
-		btnDeleteFile.setToolTipText("‘I‘ğ‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ğíœ‚·‚é");
+		// ãƒ„ãƒ¼ãƒ«ãƒãƒƒãƒ—ã‚’è¨­å®šã™ã‚‹
+		btnDir.setToolTipText("æ¤œç´¢ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æŒ‡å®šã™ã‚‹");
+		chkCase.setToolTipText("ãƒ•ã‚¡ã‚¤ãƒ«åã®å¤§æ–‡å­—/å°æ–‡å­—ã‚’åŒºåˆ¥ã—ã¦æ¤œç´¢ã‚’è¡Œã†");
+		btnSearch.setToolTipText("æ¤œç´¢ã‚’é–‹å§‹ã™ã‚‹");
+		btnClear.setToolTipText("æ¤œç´¢çµæœã‚’ã‚¯ãƒªã‚¢ã™ã‚‹");
+		btnCopy.setToolTipText("æ¤œç´¢çµæœã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹");
+		btnSelectAll.setToolTipText("ãƒªã‚¹ãƒˆã‚’å…¨é¸æŠçŠ¶æ…‹ã«ã™ã‚‹");
+		btnSelectedClear.setToolTipText("ãƒªã‚¹ãƒˆã®é¸æŠçŠ¶æ…‹ã‚’è§£é™¤ã™ã‚‹");
+		btnDeleteFile.setToolTipText("é¸æŠã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹");
 
-		// ƒfƒtƒHƒ‹ƒg‚Ìƒ{ƒ^ƒ“‚Ìİ’è
+		// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒœã‚¿ãƒ³ã®è¨­å®š
 		getRootPane().setDefaultButton(btnSearch);
 
 		JPanel panelComponents = new JPanel();
@@ -151,7 +151,7 @@ public class SearchFile extends JFrame
 
 
 		/*
-		 * ƒŠƒXƒgƒRƒ“ƒgƒ[ƒ‹‚Ìİ’è
+		 * ãƒªã‚¹ãƒˆã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã®è¨­å®š
 		 */
 		listFile.setCellRenderer(new CheckListCellRenderer());
 		JScrollPane scrollList = new JScrollPane(listFile);
@@ -159,7 +159,7 @@ public class SearchFile extends JFrame
 
 
 		/*
-		 * ¶‰E‚Ìƒpƒlƒ‹‚ğ”z’u
+		 * å·¦å³ã®ãƒ‘ãƒãƒ«ã‚’é…ç½®
 		 */
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(panelComponents, BorderLayout.EAST);
@@ -167,38 +167,38 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒƒjƒ…[ƒo[‚Ìİ’è‚ğs‚¤
-	 * ‚±‚Ìƒƒ\ƒbƒh‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çŒÄ‚Î‚ê‚é
+	 * ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®è¨­å®šã‚’è¡Œã†
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 	 */
 	private void addMenuBar(){
 		JMenuBar menuBar = new JMenuBar();
 
 		/*
-		 * ƒtƒ@ƒCƒ‹ƒƒjƒ…[‚Ìİ’è
+		 * ãƒ•ã‚¡ã‚¤ãƒ«ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¨­å®š
 		 */
-		menuFile = new JLinkMenu("ƒtƒ@ƒCƒ‹(F)", this);
+		menuFile = new JLinkMenu("ãƒ•ã‚¡ã‚¤ãƒ«(F)", this);
 		menuFile.setMnemonic(KeyEvent.VK_F);
-		menuFileExit = new JLinkMenuItem("ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌI—¹(X)", this);
+		menuFileExit = new JLinkMenuItem("ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®çµ‚äº†(X)", this);
 		menuFileExit.setMnemonic(KeyEvent.VK_X);
 		menuFile.add(menuFileExit);
 		menuFileExit.addActionListener(this);
 		menuBar.add(menuFile);
 
 		/*
-		 * Look & Feel ƒƒjƒ…[‚Ìİ’è
+		 * Look & Feel ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¨­å®š
 		 */
 		menuChange = new JLinkMenu("Look & Feel", this);
 		menuChange.setMnemonic(KeyEvent.VK_L);
 
 		menuChangeCross = new JLinkMenuItem(new ChangeLookAndFeelAction(
 			this, UIManager.getCrossPlatformLookAndFeelClassName(),
-			"ƒNƒƒXƒvƒ‰ƒbƒgƒtƒH[ƒ€(C)"), this);
+			"ã‚¯ãƒ­ã‚¹ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ (C)"), this);
 		menuChangeCross.setMnemonic(KeyEvent.VK_C);
 		menuChange.add(menuChangeCross);
 
 		menuChangeSystem = new JLinkMenuItem(new ChangeLookAndFeelAction(
 			this, UIManager.getSystemLookAndFeelClassName(),
-			"ƒVƒXƒeƒ€ƒvƒ‰ƒbƒgƒtƒH[ƒ€(S)"), this);
+			"ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ (S)"), this);
 		menuChangeSystem.setMnemonic(KeyEvent.VK_S);
 		menuChange.add(menuChangeSystem);
 
@@ -240,7 +240,7 @@ public class SearchFile extends JFrame
 		menuChangeNimbus.setEnabled(isSupportedLookAndFeel(classNimbus));
 		menuChange.add(menuChangeNimbus);
 
-		// ƒOƒ‹[ƒv‚Ìİ’è‚ğs‚¤
+		// ã‚°ãƒ«ãƒ¼ãƒ—ã®è¨­å®šã‚’è¡Œã†
 		ButtonGroup groupLAF = new ButtonGroup();
 		groupLAF.add(menuChangeMetal);
 		groupLAF.add(menuChangeWin);
@@ -249,7 +249,7 @@ public class SearchFile extends JFrame
 		groupLAF.add(menuChangeMac);
 		groupLAF.add(menuChangeNimbus);
 
-		// Œ»İ‚Ìƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚©‚çƒƒjƒ…[‚Ì‘I‘ğó‘Ô‚ğŒˆ’è‚·‚é
+		// ç¾åœ¨ã®ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‹ã‚‰ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é¸æŠçŠ¶æ…‹ã‚’æ±ºå®šã™ã‚‹
 		LookAndFeel laf = UIManager.getLookAndFeel();
 		if(laf != null){
 			String className = laf.getClass().getName();
@@ -275,18 +275,18 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒXƒe[ƒ^ƒXƒo[‚Ìİ’è‚ğs‚¤
-	 * ‚±‚Ìƒƒ\ƒbƒh‚ÍƒRƒ“ƒXƒgƒ‰ƒNƒ^‚©‚çŒÄ‚Î‚ê‚é
+	 * ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®è¨­å®šã‚’è¡Œã†
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‹ã‚‰å‘¼ã°ã‚Œã‚‹
 	 */
 	private void addStatusBar(){
-		// ƒpƒlƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚é
+		// ãƒ‘ãƒãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹
 		JPanel panelStatusBar = new JPanel();
 		JPanel[] panelStatusItems = new JPanel[2];
 		for(int i = 0 ; i < panelStatusItems.length ; i++){
 			panelStatusItems[i] = new JPanel();
 		}
 
-		// ƒpƒlƒ‹‚Ì”z’u‚ğs‚¤
+		// ãƒ‘ãƒãƒ«ã®é…ç½®ã‚’è¡Œã†
 		panelStatusBar.setLayout(new BorderLayout(2, 2));
 		panelStatusBar.setBorder(new EmptyBorder(2, 0, 0, 0));
 		for(int i = 0 ; i < panelStatusItems.length ; i++){
@@ -299,7 +299,7 @@ public class SearchFile extends JFrame
 		panelStatusBar.add(panelStatusItems[1], BorderLayout.EAST);
 		getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
 
-		// Šeƒpƒlƒ‹ƒAƒCƒeƒ€‚Ìİ’è‚ğs‚¤
+		// å„ãƒ‘ãƒãƒ«ã‚¢ã‚¤ãƒ†ãƒ ã®è¨­å®šã‚’è¡Œã†
 		labelStatusBar.setText(strStatusBar);
 		panelStatusItems[0].add(labelStatusBar, BorderLayout.CENTER);
 
@@ -308,21 +308,21 @@ public class SearchFile extends JFrame
 			nameOS = System.getProperty("os.name");
 		}
 		catch(SecurityException e){
-			nameOS = "OSî•ñ‚ğæ“¾‚Å‚«‚Ü‚¹‚ñ";
+			nameOS = "OSæƒ…å ±ã‚’å–å¾—ã§ãã¾ã›ã‚“";
 		}
 		catch(NullPointerException e){
 			e.printStackTrace();
-			nameOS = "OSî•ñ‚ğæ“¾‚Å‚«‚Ü‚¹‚ñ";
+			nameOS = "OSæƒ…å ±ã‚’å–å¾—ã§ãã¾ã›ã‚“";
 		}
 		catch(IllegalArgumentException e){
 			e.printStackTrace();
-			nameOS = "OSî•ñ‚ğæ“¾‚Å‚«‚Ü‚¹‚ñ";
+			nameOS = "OSæƒ…å ±ã‚’å–å¾—ã§ãã¾ã›ã‚“";
 		}
 		panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
 	}
 
 	/**
-	 * ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ªƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚é‚©‚ğ’²‚×‚é
+	 * ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ãŒã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ã‹ã‚’èª¿ã¹ã‚‹
 	 */
 	protected boolean isSupportedLookAndFeel(String className){
 		try{
@@ -336,7 +336,7 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒAƒNƒVƒ‡ƒ“ƒCƒxƒ“ƒg
+	 * ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆ
 	 */
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() == btnDir){
@@ -349,26 +349,26 @@ public class SearchFile extends JFrame
 
 		}else if(e.getSource() == btnSearch){
 			if(flagSearching){
-				// ƒtƒ‰ƒO‚ğ~‚ë‚µŒŸõ‚ğ’†~‚·‚é
+				// ãƒ•ãƒ©ã‚°ã‚’é™ã‚ã—æ¤œç´¢ã‚’ä¸­æ­¢ã™ã‚‹
 				btnSearch.setEnabled(false);
 				flagSearching = false;
 			}else if(listFileData.getSize() == 0 ||
 					JOptionPane.showConfirmDialog(this,
-						"ŒŸõŒ‹‰Ê‚ÍÁ‹‚³‚ê‚Ü‚·Bˆ—‚ğ‘±s‚µ‚Ä‚à‚æ‚ë‚µ‚¢‚Å‚·‚©H",
-						"ƒŠƒXƒg‚ÌÁ‹",
+						"æ¤œç´¢çµæœã¯æ¶ˆå»ã•ã‚Œã¾ã™ã€‚å‡¦ç†ã‚’ç¶šè¡Œã—ã¦ã‚‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ",
+						"ãƒªã‚¹ãƒˆã®æ¶ˆå»",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-				// ƒXƒŒƒbƒh‚ğì¬‚µAŒŸõ‚ğŠJn‚·‚é
+				// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’ä½œæˆã—ã€æ¤œç´¢ã‚’é–‹å§‹ã™ã‚‹
 				new Thread(this).start();
 			}
 
 		}else if(e.getSource() == btnClear){
 			if(JOptionPane.showConfirmDialog(this,
-					"ŒŸõŒ‹‰Ê‚ÍÁ‹‚³‚ê‚Ü‚·Bˆ—‚ğ‘±s‚µ‚Ä‚à‚æ‚ë‚µ‚¢‚Å‚·‚©H",
-					"ƒŠƒXƒg‚ÌÁ‹",
+					"æ¤œç´¢çµæœã¯æ¶ˆå»ã•ã‚Œã¾ã™ã€‚å‡¦ç†ã‚’ç¶šè¡Œã—ã¦ã‚‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ",
+					"ãƒªã‚¹ãƒˆã®æ¶ˆå»",
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-				// ƒŠƒXƒg‚ğ‰Šú‰»‚·‚é
+				// ãƒªã‚¹ãƒˆã‚’åˆæœŸåŒ–ã™ã‚‹
 				listFileData.clear();
-				setStatusBarText("ƒŠƒXƒg‚ğ‰Šú‰»‚µ‚Ü‚µ‚½");
+				setStatusBarText("ãƒªã‚¹ãƒˆã‚’åˆæœŸåŒ–ã—ã¾ã—ãŸ");
 			}
 
 		}else if(e.getSource() == btnCopy){
@@ -379,39 +379,39 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒXƒŒƒbƒh‚ğÀs‚·‚é
+	 * ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹
 	 */
 	public void run(){
 		try{
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
-					// ŒŸõ’†‚ğ¦‚·ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+					// æ¤œç´¢ä¸­ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 					setSearchingFlag(true);
 
-					// Œ»İ‚ÌƒŠƒXƒg‚ğƒNƒŠƒA‚·‚é
+					// ç¾åœ¨ã®ãƒªã‚¹ãƒˆã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 					listFileData.clear();
 				}
 			});
 
-			// w’è‚³‚ê‚½ƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚·‚é‚©‚ğ’²‚×‚é
+			// æŒ‡å®šã•ã‚ŒãŸãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã™ã‚‹ã‹ã‚’èª¿ã¹ã‚‹
 			File fileDir = new File(txtDir.getText());
 			if(!fileDir.isDirectory()){
 				SwingUtilities.invokeLater(new Runnable(){
 					public void run(){
-						setStatusBarText("ƒfƒBƒŒƒNƒgƒŠ‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+						setStatusBarText("ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒå­˜åœ¨ã—ã¾ã›ã‚“");
 					}
 				});
 				return;
 			}
 
-			// ƒtƒ@ƒCƒ‹‚ğŒŸõ‚·‚é
+			// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œç´¢ã™ã‚‹
 			final int numFiles = RecursiveSearch(fileDir, txtFile.getText(), listFileData);
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
 					if(numFiles == 0){
-						setStatusBarText("ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½");
+						setStatusBarText("ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸ");
 					}else{
-						setStatusBarText(numFiles + "ŒÂ‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½");
+						setStatusBarText(numFiles + "å€‹ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸ");
 					}
 				}
 			});
@@ -419,7 +419,7 @@ public class SearchFile extends JFrame
 		finally{
 			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
-					// ŒŸõ’†‚ğ¦‚·ƒtƒ‰ƒO‚ğ~‚ë‚·
+					// æ¤œç´¢ä¸­ã‚’ç¤ºã™ãƒ•ãƒ©ã‚°ã‚’é™ã‚ã™
 					setSearchingFlag(false);
 				}
 			});
@@ -427,21 +427,21 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * Ä‹A“I‚Éƒtƒ@ƒCƒ‹ŒŸõ‚ğs‚¢AŒ©‚Â‚©‚Á‚½ƒtƒ@ƒCƒ‹”‚ğ•Ô‚·
+	 * å†å¸°çš„ã«ãƒ•ã‚¡ã‚¤ãƒ«æ¤œç´¢ã‚’è¡Œã„ã€è¦‹ã¤ã‹ã£ãŸãƒ•ã‚¡ã‚¤ãƒ«æ•°ã‚’è¿”ã™
 	 */
 	private int RecursiveSearch(File dir, String strPattern, DefaultListModel list){
-		int num = 0;	// ŒŸõ‚³‚ê‚½ƒtƒ@ƒCƒ‹”
+		int num = 0;	// æ¤œç´¢ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«æ•°
 
 		final String dirPath = dir.getAbsolutePath();
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
-				// ƒXƒe[ƒ^ƒXƒo[‚ÌƒeƒLƒXƒg‚ğİ’è‚·‚é
-				setStatusBarText(dirPath + " ‚ğŒŸõ’†...");
+				// ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®šã™ã‚‹
+				setStatusBarText(dirPath + " ã‚’æ¤œç´¢ä¸­...");
 			}
 		});
 
 		try{
-			// dir“à‚Ìƒtƒ@ƒCƒ‹‚ğŒŸõ‚·‚é
+			// dirå†…ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œç´¢ã™ã‚‹
 			int flags = 0;
 			if(!chkCase.isSelected()){
 				flags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
@@ -460,7 +460,7 @@ public class SearchFile extends JFrame
 				return 0;
 			}
 
-			// dir‚ÌƒTƒuƒfƒBƒŒƒNƒgƒŠ‚ğÄ‹A“I‚ÉŒŸõ‚·‚é
+			// dirã®ã‚µãƒ–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å†å¸°çš„ã«æ¤œç´¢ã™ã‚‹
 			for(int i = 0 ; i < files.length ; i++){
 				if(files[i].isDirectory()){
 					num += RecursiveSearch(files[i], strPattern, list);
@@ -475,7 +475,7 @@ public class SearchFile extends JFrame
 					num++;
 				}
 
-				// ƒtƒ‰ƒO‚ª~‚ë‚³‚ê‚Ä‚¢‚éê‡‚ÍŒŸõ‚ğ’†~‚·‚é
+				// ãƒ•ãƒ©ã‚°ãŒé™ã‚ã•ã‚Œã¦ã„ã‚‹å ´åˆã¯æ¤œç´¢ã‚’ä¸­æ­¢ã™ã‚‹
 				if(!flagSearching)
 					break;
 			}
@@ -483,7 +483,7 @@ public class SearchFile extends JFrame
 		catch(PatternSyntaxException e){
 			try{
 				JOptionPane.showMessageDialog(this,
-					"³‹K•\Œ»‚Ì\•¶‚ÉƒGƒ‰[‚ª‚ ‚è‚Ü‚·", "Error",
+					"æ­£è¦è¡¨ç¾ã®æ§‹æ–‡ã«ã‚¨ãƒ©ãƒ¼ãŒã‚ã‚Šã¾ã™", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			}
 			catch(HeadlessException exc){
@@ -501,26 +501,26 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒtƒ‰ƒO‚ğİ’è‚µA‚»‚ê‚É”º‚¢ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìó‘Ô‚ğ•Ï‰»‚³‚¹‚é
+	 * ãƒ•ãƒ©ã‚°ã‚’è¨­å®šã—ã€ãã‚Œã«ä¼´ã„ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®çŠ¶æ…‹ã‚’å¤‰åŒ–ã•ã›ã‚‹
 	 */
 	protected void setSearchingFlag(boolean flag){
-		// ƒtƒ‰ƒO‚ğİ’è‚·‚é
+		// ãƒ•ãƒ©ã‚°ã‚’è¨­å®šã™ã‚‹
 		flagSearching = flag;
 
-		// ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ìó‘Ô‚ğ•Ï‚¦‚é
+		// ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®çŠ¶æ…‹ã‚’å¤‰ãˆã‚‹
 		if(flag){
-			btnSearch.setText("ŒŸõ’†~");
+			btnSearch.setText("æ¤œç´¢ä¸­æ­¢");
 		}else{
-			btnSearch.setText("ŒŸõŠJn");
+			btnSearch.setText("æ¤œç´¢é–‹å§‹");
 			btnSearch.setEnabled(true);
 		}
 		btnClear.setEnabled(!flag);
 	}
 
 	/**
-	 * ƒXƒe[ƒ^ƒXƒo[‚ÌƒeƒLƒXƒg‚ğ•ÏX‚·‚é
-	 * labelStatusBar‚ÌsetTextƒƒ\ƒbƒh‚ğg—p‚µ‚ÄƒeƒLƒXƒg‚ğ•ÏX‚µ‚½ê‡‚É‚Í
-	 * ˆê“I‚É•ÏX‚³‚ê‚é‚ªA‚±‚Ìƒƒ\ƒbƒh‚ğg—p‚µ‚½ê‡‚Í•ÏX“à—e‚ª•Û‘¶‚³‚ê‚é
+	 * ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
+	 * labelStatusBarã®setTextãƒ¡ã‚½ãƒƒãƒ‰ã‚’ä½¿ç”¨ã—ã¦ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã—ãŸå ´åˆã«ã¯
+	 * ä¸€æ™‚çš„ã«å¤‰æ›´ã•ã‚Œã‚‹ãŒã€ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚’ä½¿ç”¨ã—ãŸå ´åˆã¯å¤‰æ›´å†…å®¹ãŒä¿å­˜ã•ã‚Œã‚‹
 	 */
 	protected void setStatusBarText(String text){
 		strStatusBar = text;
@@ -528,32 +528,32 @@ public class SearchFile extends JFrame
 	}
 
 	public void changeSelectMenu(boolean isIncluded, JMenuItem sender){
-		// ƒƒjƒ…[‘I‘ğ‰ğœ‚Ì“®ì
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠè§£é™¤æ™‚ã®å‹•ä½œ
 		if(!isIncluded){
 			labelStatusBar.setText(strStatusBar);
 
-		// ƒƒjƒ…[‘I‘ğ‚Ì“®ì
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã®å‹•ä½œ
 		}else{
 			if(sender == menuFileExit){
-				labelStatusBar.setText("ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ğI—¹‚·‚é");
+				labelStatusBar.setText("ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚’çµ‚äº†ã™ã‚‹");
 			}else if(sender == menuChange){
-				labelStatusBar.setText("ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌŠOŠÏ‚Ì•ÏX‚ğs‚¤");
+				labelStatusBar.setText("ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®å¤–è¦³ã®å¤‰æ›´ã‚’è¡Œã†");
 			}else if(sender == menuChangeCross){
-				labelStatusBar.setText("Swing‚ÌƒNƒƒXƒvƒ‰ƒbƒgƒtƒH[ƒ€‚Ìƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("Swingã®ã‚¯ãƒ­ã‚¹ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã®ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeSystem){
-				labelStatusBar.setText("g—p’†‚ÌƒVƒXƒeƒ€‚Ìƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("ä½¿ç”¨ä¸­ã®ã‚·ã‚¹ãƒ†ãƒ ã®ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeMetal){
-				labelStatusBar.setText("Metalƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("Metalãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeWin){
-				labelStatusBar.setText("Windowsƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("Windowsãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeMotif){
-				labelStatusBar.setText("CDE/Motifƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("CDE/Motifãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeGTK){
-				labelStatusBar.setText("GTK+ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("GTK+ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeMac){
-				labelStatusBar.setText("Macintoshƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("Macintoshãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else if(sender == menuChangeNimbus){
-				labelStatusBar.setText("Nimbusƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ“K—p‚·‚é");
+				labelStatusBar.setText("Nimbusãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’é©ç”¨ã™ã‚‹");
 			}else{
 				labelStatusBar.setText(sender.getName());
 			}
@@ -561,7 +561,7 @@ public class SearchFile extends JFrame
 	}
 
 	/**
-	 * ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹•ÏX‚ÌƒAƒNƒVƒ‡ƒ“
+	 * ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«å¤‰æ›´æ™‚ã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³
 	 */
 	class ChangeLookAndFeelAction extends AbstractAction
 	{
@@ -569,8 +569,8 @@ public class SearchFile extends JFrame
 		private String className;
 
 		/**
-		 * @param comp ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ•ÏX‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
-		 * @param className Look & Feel ‚ğÀ‘•‚·‚éƒNƒ‰ƒX‚Ì–¼‘O‚ğw’è‚·‚é•¶š—ñ
+		 * @param comp ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’å¤‰æ›´ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+		 * @param className Look & Feel ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®åå‰ã‚’æŒ‡å®šã™ã‚‹æ–‡å­—åˆ—
 		 */
 		public ChangeLookAndFeelAction(Component comp, String className){
 			super();
@@ -579,9 +579,9 @@ public class SearchFile extends JFrame
 		}
 
 		/**
-		 * @param comp ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ•ÏX‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
-		 * @param className Look & Feel ‚ğÀ‘•‚·‚éƒNƒ‰ƒX‚Ì–¼‘O‚ğw’è‚·‚é•¶š—ñ
-		 * @param name à–¾•¶š—ñ
+		 * @param comp ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’å¤‰æ›´ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+		 * @param className Look & Feel ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®åå‰ã‚’æŒ‡å®šã™ã‚‹æ–‡å­—åˆ—
+		 * @param name èª¬æ˜æ–‡å­—åˆ—
 		 */
 		public ChangeLookAndFeelAction(Component comp, String className, String name){
 			super(name);
@@ -590,10 +590,10 @@ public class SearchFile extends JFrame
 		}
 
 		/**
-		 * @param comp ƒ‹ƒbƒNƒAƒ“ƒhƒtƒB[ƒ‹‚ğ•ÏX‚·‚éƒRƒ“ƒ|[ƒlƒ“ƒg
-		 * @param className Look & Feel ‚ğÀ‘•‚·‚éƒNƒ‰ƒX‚Ì–¼‘O‚ğw’è‚·‚é•¶š—ñ
-		 * @param name à–¾•¶š—ñ
-		 * @param icon ƒAƒCƒRƒ“
+		 * @param comp ãƒ«ãƒƒã‚¯ã‚¢ãƒ³ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ã‚’å¤‰æ›´ã™ã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+		 * @param className Look & Feel ã‚’å®Ÿè£…ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®åå‰ã‚’æŒ‡å®šã™ã‚‹æ–‡å­—åˆ—
+		 * @param name èª¬æ˜æ–‡å­—åˆ—
+		 * @param icon ã‚¢ã‚¤ã‚³ãƒ³
 		 */
 		public ChangeLookAndFeelAction(Component comp, String className, String name, Icon icon){
 			super(name, icon);
@@ -608,7 +608,7 @@ public class SearchFile extends JFrame
 					UIManager.setLookAndFeel(className);
 					SwingUtilities.updateComponentTreeUI(comp);
 
-					// ƒƒjƒ…[€–Ú‚Ì‘I‘ğó‘Ô‚ğXV‚·‚é
+					// ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã®é¸æŠçŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
 					if(className.equals(classMetal)){
 						menuChangeMetal.setSelected(true);
 					}else if(className.equals(classWin)){

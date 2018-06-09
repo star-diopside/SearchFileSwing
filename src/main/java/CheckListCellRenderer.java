@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import java.io.Serializable;
 
 /**
- * コンポーネントにJCheckBoxを使用したListCellRenderer
+ * 繧ｳ繝ｳ繝昴�ｼ繝阪Φ繝医↓JCheckBox繧剃ｽｿ逕ｨ縺励◆ListCellRenderer
  */
 public class CheckListCellRenderer extends JCheckBox
 	implements ListCellRenderer, Serializable
