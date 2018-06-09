@@ -1,17 +1,52 @@
 package jp.gr.java_conf.stardiopside.searchfile;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.regex.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.HeadlessException;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 /**
  * ファイル検索を行うアプリケーションのフレーム
  */
+@SuppressWarnings("serial")
 public class SearchFile extends JFrame
-	implements ActionListener, Runnable, MenuLink
+	implements ActionListener, Runnable, MenuHintListener
 {
 	JLabel lblDir = new JLabel("ディレクトリ名");
 	JTextField txtDir = new JTextField(21);
@@ -34,26 +69,14 @@ public class SearchFile extends JFrame
 	JLinkMenu menuChange;
 	JLinkMenuItem menuChangeCross;
 	JLinkMenuItem menuChangeSystem;
-	JLinkRadioButtonMenuItem menuChangeMetal;
-	JLinkRadioButtonMenuItem menuChangeWin;
-	JLinkRadioButtonMenuItem menuChangeMotif;
-	JLinkRadioButtonMenuItem menuChangeGTK;
-	JLinkRadioButtonMenuItem menuChangeMac;
-	JLinkRadioButtonMenuItem menuChangeNimbus;
+
+    private Map<String, JRadioButtonMenuItem> lookAndFeelSelectedButtons = java.util.Collections.emptyMap();
 
 	DefaultListModel listFileData = new DefaultListModel();
 	JList listFile = new JList(listFileData);
 
 	private JLabel labelStatusBar = new JLabel();
 	private String strStatusBar = "レディ";
-
-	// ルックアンドフィールのクラス名
-	private static final String classMetal = "javax.swing.plaf.metal.MetalLookAndFeel";
-	private static final String classWin = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-	private static final String classMotif = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-	private static final String classGTK = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-	private static final String classMac = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
-	private static final String classNimbus = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 
 	private boolean flagSearching = false;	// 現在検索中であるかを示すフラグ
 
@@ -65,17 +88,19 @@ public class SearchFile extends JFrame
 		addStatusBar();		// ステータスバーの設定
 	}
 
-	public static void main(String[] args){
-		SearchFile frame = new SearchFile("ファイルの検索");
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SearchFile frame = new SearchFile("ファイルの検索");
 
-		// ウィンドウの大きさと終了動作の設定
-		frame.setLocation(10, 10);
-		frame.setSize(800, 550);
-		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+            // ウィンドウの大きさと終了動作の設定
+            frame.setLocation(10, 10);
+            frame.setSize(800, 550);
+            frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		// ウィンドウを表示する
-		frame.setVisible(true);
-	}
+            // ウィンドウを表示する
+            frame.setVisible(true);
+        });
+    }
 
 	/**
 	 * コンポーネントの初期化を行う
@@ -168,113 +193,73 @@ public class SearchFile extends JFrame
 		getContentPane().add(scrollList, BorderLayout.CENTER);
 	}
 
-	/**
-	 * メニューバーの設定を行う
-	 * このメソッドはコンストラクタから呼ばれる
-	 */
-	private void addMenuBar(){
-		JMenuBar menuBar = new JMenuBar();
+    /**
+     * メニューバーの設定を行う このメソッドはコンストラクタから呼ばれる
+     */
+    private void addMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
 
-		/*
-		 * ファイルメニューの設定
-		 */
-		menuFile = new JLinkMenu("ファイル(F)", this);
-		menuFile.setMnemonic(KeyEvent.VK_F);
-		menuFileExit = new JLinkMenuItem("アプリケーションの終了(X)", this);
-		menuFileExit.setMnemonic(KeyEvent.VK_X);
-		menuFile.add(menuFileExit);
-		menuFileExit.addActionListener(this);
-		menuBar.add(menuFile);
+        /*
+         * ファイルメニューの設定
+         */
+        menuFile = new JLinkMenu("ファイル(F)", this);
+        menuFile.setMnemonic(KeyEvent.VK_F);
+        menuFileExit = new JLinkMenuItem("アプリケーションの終了(X)", this);
+        menuFileExit.setMnemonic(KeyEvent.VK_X);
+        menuFileExit.setHint("アプリケーションを終了する");
+        menuFile.add(menuFileExit);
+        menuFileExit.addActionListener(this);
+        menuBar.add(menuFile);
 
-		/*
-		 * Look & Feel メニューの設定
-		 */
-		menuChange = new JLinkMenu("Look & Feel", this);
-		menuChange.setMnemonic(KeyEvent.VK_L);
+        /*
+         * Look & Feel メニューの設定
+         */
+        menuChange = new JLinkMenu("Look & Feel", this);
+        menuChange.setMnemonic(KeyEvent.VK_L);
+        menuChange.setHint("アプリケーションの外観の変更を行う");
 
-		menuChangeCross = new JLinkMenuItem(new ChangeLookAndFeelAction(
-			this, UIManager.getCrossPlatformLookAndFeelClassName(),
-			"クロスプラットフォーム(C)"), this);
-		menuChangeCross.setMnemonic(KeyEvent.VK_C);
-		menuChange.add(menuChangeCross);
+        menuChangeCross = new JLinkMenuItem(
+                new ChangeLookAndFeelAction(UIManager.getCrossPlatformLookAndFeelClassName(), "クロスプラットフォーム(C)"), this);
+        menuChangeCross.setMnemonic(KeyEvent.VK_C);
+        menuChangeCross.setHint("クロスプラットフォームのルックアンドフィールを適用する");
+        menuChange.add(menuChangeCross);
 
-		menuChangeSystem = new JLinkMenuItem(new ChangeLookAndFeelAction(
-			this, UIManager.getSystemLookAndFeelClassName(),
-			"システムプラットフォーム(S)"), this);
-		menuChangeSystem.setMnemonic(KeyEvent.VK_S);
-		menuChange.add(menuChangeSystem);
+        menuChangeSystem = new JLinkMenuItem(
+                new ChangeLookAndFeelAction(UIManager.getSystemLookAndFeelClassName(), "システムプラットフォーム(S)"), this);
+        menuChangeSystem.setMnemonic(KeyEvent.VK_S);
+        menuChangeSystem.setHint("OSのルックアンドフィールを適用する");
+        menuChange.add(menuChangeSystem);
 
-		menuChange.addSeparator();
+        menuChange.addSeparator();
 
-		menuChangeMetal = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classMetal, "Metal Look & Feel"), this);
-		menuChangeMetal.setMnemonic(KeyEvent.VK_M);
-		menuChangeMetal.setEnabled(isSupportedLookAndFeel(classMetal));
-		menuChange.add(menuChangeMetal);
+        ButtonGroup groupLAF = new ButtonGroup();
+        Map<String, JRadioButtonMenuItem> menuItems = new HashMap<>();
 
-		menuChangeWin = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classWin, "Windows Look & Feel"), this);
-		menuChangeWin.setMnemonic(KeyEvent.VK_W);
-		menuChangeWin.setEnabled(isSupportedLookAndFeel(classWin));
-		menuChange.add(menuChangeWin);
+        for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            JLinkRadioButtonMenuItem item = new JLinkRadioButtonMenuItem(
+                    new ChangeLookAndFeelAction(info.getClassName(), info.getName()), this);
+            if (!info.getName().isEmpty()) {
+                item.setMnemonic(info.getName().charAt(0));
+            }
+            item.setHint(info.getName() + "ルックアンドフィールを適用する");
+            menuChange.add(item);
+            groupLAF.add(item);
+            menuItems.put(info.getClassName(), item);
+        }
 
-		menuChangeMotif = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classMotif, "CDE/Motif Look & Feel"), this);
-		menuChangeMotif.setMnemonic(KeyEvent.VK_D);
-		menuChangeMotif.setEnabled(isSupportedLookAndFeel(classMotif));
-		menuChange.add(menuChangeMotif);
+        lookAndFeelSelectedButtons = menuItems;
 
-		menuChangeGTK = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classGTK, "GTK+ Look & Feel"), this);
-		menuChangeGTK.setMnemonic(KeyEvent.VK_G);
-		menuChangeGTK.setEnabled(isSupportedLookAndFeel(classGTK));
-		menuChange.add(menuChangeGTK);
+        // 現在のルックアンドフィールからメニューの選択状態を決定する
+        LookAndFeel laf = UIManager.getLookAndFeel();
+        if (laf != null) {
+            String className = laf.getClass().getName();
+            menuItems.get(className).setSelected(true);
+        }
 
-		menuChangeMac = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classMac, "Macintosh Look & Feel"), this);
-		menuChangeMac.setMnemonic(KeyEvent.VK_A);
-		menuChangeMac.setEnabled(isSupportedLookAndFeel(classMac));
-		menuChange.add(menuChangeMac);
+        menuBar.add(menuChange);
 
-		menuChangeNimbus = new JLinkRadioButtonMenuItem(
-			new ChangeLookAndFeelAction(this, classNimbus, "Nimbus Look & Feel"), this);
-		menuChangeNimbus.setMnemonic(KeyEvent.VK_N);
-		menuChangeNimbus.setEnabled(isSupportedLookAndFeel(classNimbus));
-		menuChange.add(menuChangeNimbus);
-
-		// グループの設定を行う
-		ButtonGroup groupLAF = new ButtonGroup();
-		groupLAF.add(menuChangeMetal);
-		groupLAF.add(menuChangeWin);
-		groupLAF.add(menuChangeMotif);
-		groupLAF.add(menuChangeGTK);
-		groupLAF.add(menuChangeMac);
-		groupLAF.add(menuChangeNimbus);
-
-		// 現在のルックアンドフィールからメニューの選択状態を決定する
-		LookAndFeel laf = UIManager.getLookAndFeel();
-		if(laf != null){
-			String className = laf.getClass().getName();
-
-			if(className.equals(classMetal)){
-				menuChangeMetal.setSelected(true);
-			}else if(className.equals(classWin)){
-				menuChangeWin.setSelected(true);
-			}else if(className.equals(classMotif)){
-				menuChangeMotif.setSelected(true);
-			}else if(className.equals(classGTK)){
-				menuChangeGTK.setSelected(true);
-			}else if(className.equals(classMac)){
-				menuChangeMac.setSelected(true);
-			}else if(className.equals(classNimbus)){
-				menuChangeNimbus.setSelected(true);
-			}
-		}
-
-		menuBar.add(menuChange);
-
-		setJMenuBar(menuBar);
-	}
+        setJMenuBar(menuBar);
+    }
 
 	/**
 	 * ステータスバーの設定を行う
@@ -321,20 +306,6 @@ public class SearchFile extends JFrame
 			nameOS = "OS情報を取得できません";
 		}
 		panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
-	}
-
-	/**
-	 * ルックアンドフィールがサポートされているかを調べる
-	 */
-	protected boolean isSupportedLookAndFeel(String className){
-		try{
-			Class laf = Class.forName(className);
-			LookAndFeel newLAF = (LookAndFeel)(laf.newInstance());
-			return newLAF.isSupportedLookAndFeel();
-		}
-		catch(Exception e){
-			return false;
-		}
 	}
 
 	/**
@@ -529,115 +500,44 @@ public class SearchFile extends JFrame
 		labelStatusBar.setText(strStatusBar);
 	}
 
-	public void changeSelectMenu(boolean isIncluded, JMenuItem sender){
-		// メニュー選択解除時の動作
-		if(!isIncluded){
-			labelStatusBar.setText(strStatusBar);
+    @Override
+    public void changeSelectMenu(JMenuItem sender, boolean isIncluded, String hint) {
+        if (isIncluded) {
+            labelStatusBar.setText(hint);
+        } else {
+            labelStatusBar.setText(strStatusBar);
+        }
+    }
 
-		// メニュー選択時の動作
-		}else{
-			if(sender == menuFileExit){
-				labelStatusBar.setText("アプリケーションを終了する");
-			}else if(sender == menuChange){
-				labelStatusBar.setText("アプリケーションの外観の変更を行う");
-			}else if(sender == menuChangeCross){
-				labelStatusBar.setText("Swingのクロスプラットフォームのルックアンドフィールを適用する");
-			}else if(sender == menuChangeSystem){
-				labelStatusBar.setText("使用中のシステムのルックアンドフィールを適用する");
-			}else if(sender == menuChangeMetal){
-				labelStatusBar.setText("Metalルックアンドフィールを適用する");
-			}else if(sender == menuChangeWin){
-				labelStatusBar.setText("Windowsルックアンドフィールを適用する");
-			}else if(sender == menuChangeMotif){
-				labelStatusBar.setText("CDE/Motifルックアンドフィールを適用する");
-			}else if(sender == menuChangeGTK){
-				labelStatusBar.setText("GTK+ルックアンドフィールを適用する");
-			}else if(sender == menuChangeMac){
-				labelStatusBar.setText("Macintoshルックアンドフィールを適用する");
-			}else if(sender == menuChangeNimbus){
-				labelStatusBar.setText("Nimbusルックアンドフィールを適用する");
-			}else{
-				labelStatusBar.setText(sender.getName());
-			}
-		}
-	}
+    /**
+     * ルックアンドフィール変更時のアクション
+     */
+    private class ChangeLookAndFeelAction extends AbstractAction {
+        private String className;
 
-	/**
-	 * ルックアンドフィール変更時のアクション
-	 */
-	class ChangeLookAndFeelAction extends AbstractAction
-	{
-		private Component comp;
-		private String className;
+        /**
+         * @param className Look & Feel を実装するクラスの名前を指定する文字列
+         * @param name 説明文字列
+         */
+        public ChangeLookAndFeelAction(String className, String name) {
+            super(name);
+            this.className = className;
+        }
 
-		/**
-		 * @param comp ルックアンドフィールを変更するコンポーネント
-		 * @param className Look & Feel を実装するクラスの名前を指定する文字列
-		 */
-		public ChangeLookAndFeelAction(Component comp, String className){
-			super();
-			this.comp = comp;
-			this.className = className;
-		}
+        public void actionPerformed(ActionEvent e) {
+            try {
+                LookAndFeel laf = UIManager.getLookAndFeel();
+                if (laf == null || !laf.getClass().getName().equals(className)) {
+                    UIManager.setLookAndFeel(className);
+                    SwingUtilities.updateComponentTreeUI(SearchFile.this);
 
-		/**
-		 * @param comp ルックアンドフィールを変更するコンポーネント
-		 * @param className Look & Feel を実装するクラスの名前を指定する文字列
-		 * @param name 説明文字列
-		 */
-		public ChangeLookAndFeelAction(Component comp, String className, String name){
-			super(name);
-			this.comp = comp;
-			this.className = className;
-		}
-
-		/**
-		 * @param comp ルックアンドフィールを変更するコンポーネント
-		 * @param className Look & Feel を実装するクラスの名前を指定する文字列
-		 * @param name 説明文字列
-		 * @param icon アイコン
-		 */
-		public ChangeLookAndFeelAction(Component comp, String className, String name, Icon icon){
-			super(name, icon);
-			this.comp = comp;
-			this.className = className;
-		}
-
-		public void actionPerformed(ActionEvent e){
-			try{
-				LookAndFeel laf = UIManager.getLookAndFeel();
-				if(laf == null || !laf.getClass().getName().equals(className)){
-					UIManager.setLookAndFeel(className);
-					SwingUtilities.updateComponentTreeUI(comp);
-
-					// メニュー項目の選択状態を更新する
-					if(className.equals(classMetal)){
-						menuChangeMetal.setSelected(true);
-					}else if(className.equals(classWin)){
-						menuChangeWin.setSelected(true);
-					}else if(className.equals(classMotif)){
-						menuChangeMotif.setSelected(true);
-					}else if(className.equals(classGTK)){
-						menuChangeGTK.setSelected(true);
-					}else if(className.equals(classMac)){
-						menuChangeMac.setSelected(true);
-					}else if(className.equals(classNimbus)){
-						menuChangeNimbus.setSelected(true);
-					}
-				}
-			}
-			catch(ClassNotFoundException exc){
-				exc.printStackTrace();
-			}
-			catch(InstantiationException exc){
-				exc.printStackTrace();
-			}
-			catch(IllegalAccessException exc){
-				exc.printStackTrace();
-			}
-			catch (UnsupportedLookAndFeelException exc){
-				exc.printStackTrace();
-			}
-		}
-	}
+                    // メニュー項目の選択状態を更新する
+                    lookAndFeelSelectedButtons.get(className).setSelected(true);
+                }
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                    | UnsupportedLookAndFeelException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+    }
 }

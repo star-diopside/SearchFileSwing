@@ -1,36 +1,47 @@
 package jp.gr.java_conf.stardiopside.searchfile;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JMenu;
 
 /**
  * メニュー選択とリンクさせるJMenu
  */
-public class JLinkMenu extends JMenu
-{
-	protected MenuLink link;
+@SuppressWarnings("serial")
+public class JLinkMenu extends JMenu {
 
-	public JLinkMenu(MenuLink link){
-		super();
-		this.link = link;
-	}
+    private MenuHintListener listener;
+    private String hint;
 
-	public JLinkMenu(Action a, MenuLink link){
-		super(a);
-		this.link = link;
-	}
+    public JLinkMenu(MenuHintListener listener) {
+        super();
+        this.listener = listener;
+    }
 
-	public JLinkMenu(String s, MenuLink link){
-		super(s);
-		this.link = link;
-	}
+    public JLinkMenu(Action a, MenuHintListener listener) {
+        super(a);
+        this.listener = listener;
+    }
 
-	public JLinkMenu(String s, boolean b, MenuLink link){
-		super(s, b);
-		this.link = link;
-	}
+    public JLinkMenu(String s, MenuHintListener listener) {
+        super(s);
+        this.listener = listener;
+    }
 
-	public void menuSelectionChanged(boolean isIncluded){
-		super.menuSelectionChanged(isIncluded);
-		link.changeSelectMenu(isIncluded, this);
-	}
+    public JLinkMenu(String s, boolean b, MenuHintListener listener) {
+        super(s, b);
+        this.listener = listener;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    public void menuSelectionChanged(boolean isIncluded) {
+        super.menuSelectionChanged(isIncluded);
+        listener.changeSelectMenu(this, isIncluded, hint);
+    }
 }

@@ -1,56 +1,68 @@
 package jp.gr.java_conf.stardiopside.searchfile;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JRadioButtonMenuItem;
 
 /**
  * メニュー選択とリンクさせるJRadioButtonMenuItem
  */
-public class JLinkRadioButtonMenuItem extends JRadioButtonMenuItem
-{
-	protected MenuLink link;
+@SuppressWarnings("serial")
+public class JLinkRadioButtonMenuItem extends JRadioButtonMenuItem {
 
-	public JLinkRadioButtonMenuItem(MenuLink link){
-		super();
-		this.link = link;
-	}
+    private MenuHintListener listener;
+    private String hint;
 
-	public JLinkRadioButtonMenuItem(String text, MenuLink link){
-		super(text);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(MenuHintListener listener) {
+        super();
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(String text, boolean selected, MenuLink link){
-		super(text, selected);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(String text, MenuHintListener listener) {
+        super(text);
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(Action a, MenuLink link){
-		super(a);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(String text, boolean selected, MenuHintListener listener) {
+        super(text, selected);
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(Icon icon, MenuLink link){
-		super(icon);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(Action a, MenuHintListener listener) {
+        super(a);
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(Icon icon, boolean selected, MenuLink link){
-		super(icon, selected);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(Icon icon, MenuHintListener listener) {
+        super(icon);
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(String text, Icon icon, MenuLink link){
-		super(text, icon);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(Icon icon, boolean selected, MenuHintListener listener) {
+        super(icon, selected);
+        this.listener = listener;
+    }
 
-	public JLinkRadioButtonMenuItem(String text, Icon icon, boolean selected, MenuLink link){
-		super(text, icon, selected);
-		this.link = link;
-	}
+    public JLinkRadioButtonMenuItem(String text, Icon icon, MenuHintListener listener) {
+        super(text, icon);
+        this.listener = listener;
+    }
 
-	public void menuSelectionChanged(boolean isIncluded){
-		super.menuSelectionChanged(isIncluded);
-		link.changeSelectMenu(isIncluded, this);
-	}
+    public JLinkRadioButtonMenuItem(String text, Icon icon, boolean selected, MenuHintListener listener) {
+        super(text, icon, selected);
+        this.listener = listener;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    public void menuSelectionChanged(boolean isIncluded) {
+        super.menuSelectionChanged(isIncluded);
+        listener.changeSelectMenu(this, isIncluded, hint);
+    }
 }
