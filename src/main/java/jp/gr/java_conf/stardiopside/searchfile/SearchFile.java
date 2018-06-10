@@ -55,46 +55,38 @@ import javax.swing.border.LineBorder;
 public class SearchFile extends JFrame implements MenuHintListener {
     private static final Logger logger = Logger.getLogger(SearchFile.class.getName());
 
-	JLabel lblDir = new JLabel("ディレクトリ名");
-	JTextField txtDir = new JTextField(21);
-	JButton btnDir = new JButton("ディレクトリの指定");
-	JLabel lblFile = new JLabel("ファイル名");
-	JTextField txtFile = new JTextField(21);
-	JRadioButton radioRegular = new JRadioButton("正規表現");
-	JRadioButton radioWildCard = new JRadioButton("ワイルドカード");
-	JCheckBox chkCase = new JCheckBox("大文字/小文字の区別を行う");
-	JButton btnSearch = new JButton("検索開始");
-	JButton btnClear = new JButton("リストのクリア");
-	JButton btnCopy = new JButton("検索結果をクリップボードにコピー");
-	JButton btnSelectAll = new JButton("すべて選択");
-	JButton btnSelectedClear = new JButton("選択解除");
-	JButton btnDeleteFile = new JButton("選択ファイルを削除");
-	JCheckBox chkDelete = new JCheckBox("削除時にファイルをごみ箱に移す");
+    private JLabel lblDir = new JLabel("ディレクトリ名");
+    private JTextField txtDir = new JTextField(21);
+    private JButton btnDir = new JButton("ディレクトリの指定");
+    private JLabel lblFile = new JLabel("ファイル名");
+    private JTextField txtFile = new JTextField(21);
+    private JRadioButton radioRegular = new JRadioButton("正規表現");
+    private JRadioButton radioWildCard = new JRadioButton("ワイルドカード");
+    private JCheckBox chkCase = new JCheckBox("大文字/小文字の区別を行う");
+    private JButton btnSearch = new JButton("検索開始");
+    private JButton btnClear = new JButton("リストのクリア");
+    private JButton btnCopy = new JButton("検索結果をクリップボードにコピー");
+    private JButton btnSelectAll = new JButton("すべて選択");
+    private JButton btnSelectedClear = new JButton("選択解除");
+    private JButton btnDeleteFile = new JButton("選択ファイルを削除");
+    private JCheckBox chkDelete = new JCheckBox("削除時にファイルをごみ箱に移す");
 
-	JLinkMenu menuFile;
-	JLinkMenuItem menuFileExit;
-	JLinkMenu menuChange;
-	JLinkMenuItem menuChangeCross;
-	JLinkMenuItem menuChangeSystem;
+    private JLinkMenu menuFile;
+    private JLinkMenuItem menuFileExit;
+    private JLinkMenu menuChange;
+    private JLinkMenuItem menuChangeCross;
+    private JLinkMenuItem menuChangeSystem;
 
     private Map<String, JRadioButtonMenuItem> lookAndFeelSelectedButtons = java.util.Collections.emptyMap();
 
     private DefaultListModel<JCheckBox> listFileData = new DefaultListModel<>();
     private JCheckBoxList listFile = new JCheckBoxList(listFileData);
 
-	private JLabel labelStatusBar = new JLabel();
-	private String strStatusBar = "レディ";
+    private JLabel labelStatusBar = new JLabel();
+    private String strStatusBar = "レディ";
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean isSearching = false;
-
-	public SearchFile(String title){
-		super(title);
-
-		initComponents();	// コンポーネントの設定
-		addMenuBar();		// メニューバーの設定
-		addStatusBar();		// ステータスバーの設定
-	}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -110,53 +102,61 @@ public class SearchFile extends JFrame implements MenuHintListener {
         });
     }
 
-	/**
-	 * コンポーネントの初期化を行う
-	 * このメソッドはコンストラクタから呼ばれる
-	 */
-	private void initComponents(){
-		/*
-		 * 複数のコンポーネントを含むパネルのコントロールの設定
-		 */
-		JGridBagLayoutPanel panelSubComponents = new JGridBagLayoutPanel();
+    public SearchFile(String title) {
+        super(title);
 
-		// コンポーネントを追加する
-		panelSubComponents.setGridInsets(new Insets(2, 8, 2, 8));
-		panelSubComponents.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(txtDir, 2, 1, GridBagConstraints.CENTER);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(btnDir, 2, 1, GridBagConstraints.EAST);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(lblFile, 2, 1, GridBagConstraints.WEST);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(txtFile, 2, 1, GridBagConstraints.CENTER);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
-		panelSubComponents.add(radioWildCard, 1, 1, GridBagConstraints.CENTER);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(chkCase, 2, 1, GridBagConstraints.EAST);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(btnSearch, 1, 1, GridBagConstraints.WEST);
-		panelSubComponents.add(btnClear, 1, 1, GridBagConstraints.EAST);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(btnCopy, 2, 1, GridBagConstraints.CENTER);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(btnSelectAll, 1, 1, GridBagConstraints.WEST, new Insets(24, 8, 2, 8));
-		panelSubComponents.add(btnSelectedClear, 1, 1, GridBagConstraints.EAST, new Insets(24, 8, 2, 8));
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(btnDeleteFile, 2, 1, GridBagConstraints.CENTER);
-		panelSubComponents.nextGridY();
-		panelSubComponents.add(chkDelete, 2, 1, GridBagConstraints.WEST);
+        initComponents(); // コンポーネントの設定
+        addMenuBar(); // メニューバーの設定
+        addStatusBar(); // ステータスバーの設定
+    }
 
-		// データを設定する
-		txtDir.setText(new File(".").getAbsoluteFile().getParent());
+    /**
+     * コンポーネントの初期化を行う<br>
+     * このメソッドはコンストラクタから呼ばれる
+     */
+    private void initComponents() {
+        /*
+         * 複数のコンポーネントを含むパネルのコントロールの設定
+         */
+        JGridBagLayoutPanel panelSubComponents = new JGridBagLayoutPanel();
 
-		// グループと初期状態を設定する
-		ButtonGroup groupRadio = new ButtonGroup();
-		groupRadio.add(radioRegular);
-		groupRadio.add(radioWildCard);
-		radioRegular.setSelected(true);
+        // コンポーネントを追加する
+        panelSubComponents.setGridInsets(new Insets(2, 8, 2, 8));
+        panelSubComponents.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(txtDir, 2, 1, GridBagConstraints.CENTER);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(btnDir, 2, 1, GridBagConstraints.EAST);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(lblFile, 2, 1, GridBagConstraints.WEST);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(txtFile, 2, 1, GridBagConstraints.CENTER);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
+        panelSubComponents.add(radioWildCard, 1, 1, GridBagConstraints.CENTER);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(chkCase, 2, 1, GridBagConstraints.EAST);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(btnSearch, 1, 1, GridBagConstraints.WEST);
+        panelSubComponents.add(btnClear, 1, 1, GridBagConstraints.EAST);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(btnCopy, 2, 1, GridBagConstraints.CENTER);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(btnSelectAll, 1, 1, GridBagConstraints.WEST, new Insets(24, 8, 2, 8));
+        panelSubComponents.add(btnSelectedClear, 1, 1, GridBagConstraints.EAST, new Insets(24, 8, 2, 8));
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(btnDeleteFile, 2, 1, GridBagConstraints.CENTER);
+        panelSubComponents.nextGridY();
+        panelSubComponents.add(chkDelete, 2, 1, GridBagConstraints.WEST);
+
+        // データを設定する
+        txtDir.setText(Paths.get(".").toAbsolutePath().getParent().toString());
+
+        // グループと初期状態を設定する
+        ButtonGroup groupRadio = new ButtonGroup();
+        groupRadio.add(radioRegular);
+        groupRadio.add(radioWildCard);
+        radioRegular.setSelected(true);
 
         // アクションリスナーを追加する
         btnDir.addActionListener(e -> {
@@ -280,38 +280,36 @@ public class SearchFile extends JFrame implements MenuHintListener {
         btnDeleteFile.addActionListener(e -> {
         });
 
-		// ツールチップを設定する
-		btnDir.setToolTipText("検索するディレクトリを指定する");
-		chkCase.setToolTipText("ファイル名の大文字/小文字を区別して検索を行う");
-		btnSearch.setToolTipText("検索を開始する");
-		btnClear.setToolTipText("検索結果をクリアする");
-		btnCopy.setToolTipText("検索結果をクリップボードにコピーする");
-		btnSelectAll.setToolTipText("リストを全選択状態にする");
-		btnSelectedClear.setToolTipText("リストの選択状態を解除する");
-		btnDeleteFile.setToolTipText("選択されたファイルを削除する");
+        // ツールチップを設定する
+        btnDir.setToolTipText("検索するディレクトリを指定する");
+        chkCase.setToolTipText("ファイル名の大文字/小文字を区別して検索を行う");
+        btnSearch.setToolTipText("検索を開始する");
+        btnClear.setToolTipText("検索結果をクリアする");
+        btnCopy.setToolTipText("検索結果をクリップボードにコピーする");
+        btnSelectAll.setToolTipText("リストを全選択状態にする");
+        btnSelectedClear.setToolTipText("リストの選択状態を解除する");
+        btnDeleteFile.setToolTipText("選択されたファイルを削除する");
 
-		// デフォルトのボタンの設定
-		getRootPane().setDefaultButton(btnSearch);
+        // デフォルトのボタンの設定
+        getRootPane().setDefaultButton(btnSearch);
 
-		JPanel panelComponents = new JPanel();
-		panelComponents.setLayout(new BorderLayout());
-		panelComponents.add(panelSubComponents, BorderLayout.NORTH);
+        JPanel panelComponents = new JPanel();
+        panelComponents.setLayout(new BorderLayout());
+        panelComponents.add(panelSubComponents, BorderLayout.NORTH);
 
+        /*
+         * リストコントロールの設定
+         */
+        JScrollPane scrollList = new JScrollPane(listFile);
+        scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		/*
-		 * リストコントロールの設定
-		 */
-		JScrollPane scrollList = new JScrollPane(listFile);
-		scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-
-		/*
-		 * 左右のパネルを配置
-		 */
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(panelComponents, BorderLayout.EAST);
-		getContentPane().add(scrollList, BorderLayout.CENTER);
-	}
+        /*
+         * 左右のパネルを配置
+         */
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(panelComponents, BorderLayout.EAST);
+        getContentPane().add(scrollList, BorderLayout.CENTER);
+    }
 
     /**
      * メニューバーの設定を行う このメソッドはコンストラクタから呼ばれる
@@ -381,52 +379,36 @@ public class SearchFile extends JFrame implements MenuHintListener {
         setJMenuBar(menuBar);
     }
 
-	/**
-	 * ステータスバーの設定を行う
-	 * このメソッドはコンストラクタから呼ばれる
-	 */
-	private void addStatusBar(){
-		// パネルのインスタンスを生成する
-		JPanel panelStatusBar = new JPanel();
-		JPanel[] panelStatusItems = new JPanel[2];
-		for(int i = 0 ; i < panelStatusItems.length ; i++){
-			panelStatusItems[i] = new JPanel();
-		}
+    /**
+     * ステータスバーの設定を行う<br>
+     * このメソッドはコンストラクタから呼ばれる
+     */
+    private void addStatusBar() {
+        // パネルのインスタンスを生成する
+        JPanel panelStatusBar = new JPanel();
+        JPanel[] panelStatusItems = new JPanel[2];
+        for (int i = 0; i < panelStatusItems.length; i++) {
+            panelStatusItems[i] = new JPanel();
+        }
 
-		// パネルの配置を行う
-		panelStatusBar.setLayout(new BorderLayout(2, 2));
-		panelStatusBar.setBorder(new EmptyBorder(2, 0, 0, 0));
-		for(int i = 0 ; i < panelStatusItems.length ; i++){
-			panelStatusItems[i].setLayout(new BorderLayout());
-			panelStatusItems[i].setBorder(new CompoundBorder(
-				new LineBorder(Color.GRAY),
-				new EmptyBorder(2, 6, 2, 6)));
-		}
-		panelStatusBar.add(panelStatusItems[0], BorderLayout.CENTER);
-		panelStatusBar.add(panelStatusItems[1], BorderLayout.EAST);
-		getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
+        // パネルの配置を行う
+        panelStatusBar.setLayout(new BorderLayout(2, 2));
+        panelStatusBar.setBorder(new EmptyBorder(2, 0, 0, 0));
+        for (int i = 0; i < panelStatusItems.length; i++) {
+            panelStatusItems[i].setLayout(new BorderLayout());
+            panelStatusItems[i].setBorder(new CompoundBorder(new LineBorder(Color.GRAY), new EmptyBorder(2, 6, 2, 6)));
+        }
+        panelStatusBar.add(panelStatusItems[0], BorderLayout.CENTER);
+        panelStatusBar.add(panelStatusItems[1], BorderLayout.EAST);
+        getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
 
-		// 各パネルアイテムの設定を行う
-		labelStatusBar.setText(strStatusBar);
-		panelStatusItems[0].add(labelStatusBar, BorderLayout.CENTER);
+        // 各パネルアイテムの設定を行う
+        labelStatusBar.setText(strStatusBar);
+        panelStatusItems[0].add(labelStatusBar, BorderLayout.CENTER);
 
-		String nameOS;
-		try{
-			nameOS = System.getProperty("os.name");
-		}
-		catch(SecurityException e){
-			nameOS = "OS情報を取得できません";
-		}
-		catch(NullPointerException e){
-			e.printStackTrace();
-			nameOS = "OS情報を取得できません";
-		}
-		catch(IllegalArgumentException e){
-			e.printStackTrace();
-			nameOS = "OS情報を取得できません";
-		}
-		panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
-	}
+        String nameOS = System.getProperty("os.name");
+        panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
+    }
 
     /**
      * フラグを設定し、それに伴いコンポーネントの状態を変化させる
@@ -445,15 +427,15 @@ public class SearchFile extends JFrame implements MenuHintListener {
         btnClear.setEnabled(!isSearching);
     }
 
-	/**
-	 * ステータスバーのテキストを変更する
-	 * labelStatusBarのsetTextメソッドを使用してテキストを変更した場合には
-	 * 一時的に変更されるが、このメソッドを使用した場合は変更内容が保存される
-	 */
-	protected void setStatusBarText(String text){
-		strStatusBar = text;
-		labelStatusBar.setText(strStatusBar);
-	}
+    /**
+     * ステータスバーのテキストを変更する<br>
+     * labelStatusBarのsetTextメソッドを使用してテキストを変更した場合には
+     * 一時的に変更されるが、このメソッドを使用した場合は変更内容が保存される
+     */
+    private void setStatusBarText(String text) {
+        strStatusBar = text;
+        labelStatusBar.setText(strStatusBar);
+    }
 
     @Override
     public void changeSelectMenu(JMenuItem sender, boolean isIncluded, String hint) {
@@ -479,6 +461,7 @@ public class SearchFile extends JFrame implements MenuHintListener {
             this.className = className;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 LookAndFeel laf = UIManager.getLookAndFeel();
