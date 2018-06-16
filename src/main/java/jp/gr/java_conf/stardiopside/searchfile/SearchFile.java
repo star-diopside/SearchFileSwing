@@ -8,10 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -20,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.AbstractAction;
@@ -358,16 +359,21 @@ public class SearchFile extends JFrame implements MenuHintListener {
             return;
         }
 
-        // 検索パターンの正規表現を生成する
-        Pattern searchPattern;
+        // パス照合処理を設定する
+        PathMatcher pathMatcher;
         try {
-            int flags = 0;
-            if (!chkCase.isSelected()) {
-                flags = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+            String syntax;
+            if (radioRegular.isSelected()) {
+                syntax = "regex:";
+            } else if (radioWildCard.isSelected()) {
+                syntax = "glob:";
+            } else {
+                throw new IllegalStateException();
             }
-            searchPattern = Pattern.compile(txtFile.getText(), flags);
+            pathMatcher = FileSystems.getDefault().getPathMatcher(syntax + txtFile.getText());
         } catch (PatternSyntaxException ex) {
-            JOptionPane.showMessageDialog(this, "正規表現の構文にエラーがあります", "Error", JOptionPane.ERROR_MESSAGE);
+            logger.log(Level.FINE, ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(this, "検索条件にエラーがあります", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -392,7 +398,7 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            if (searchPattern.matcher(file.getFileName().toString()).matches()) {
+                            if (pathMatcher.matches(file.getFileName())) {
                                 SwingUtilities.invokeLater(
                                         () -> listFileData.addElement(new JCheckBox(file.toAbsolutePath().toString())));
                             }
