@@ -105,49 +105,50 @@ public class SearchFile extends JFrame implements MenuHintListener {
     public SearchFile(String title) {
         super(title);
 
-        initComponents(); // コンポーネントの設定
-        addMenuBar(); // メニューバーの設定
-        addStatusBar(); // ステータスバーの設定
+        initializeComponents();
+        addMenuBar();
+        addStatusBar();
     }
 
     /**
      * コンポーネントの初期化を行う<br>
      * このメソッドはコンストラクタから呼ばれる
      */
-    private void initComponents() {
+    private void initializeComponents() {
         /*
          * 複数のコンポーネントを含むパネルのコントロールの設定
          */
-        JGridBagLayoutPanel panelSubComponents = new JGridBagLayoutPanel();
+        JPanel panelSubComponents = new JPanel();
+        GridBagLayoutUtils gridBagLayoutUtils = new GridBagLayoutUtils(panelSubComponents);
 
         // コンポーネントを追加する
-        panelSubComponents.setGridInsets(new Insets(2, 8, 2, 8));
-        panelSubComponents.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(txtDir, 2, 1, GridBagConstraints.CENTER);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(btnDir, 2, 1, GridBagConstraints.EAST);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(lblFile, 2, 1, GridBagConstraints.WEST);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(txtFile, 2, 1, GridBagConstraints.CENTER);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
-        panelSubComponents.add(radioWildCard, 1, 1, GridBagConstraints.CENTER);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(chkCase, 2, 1, GridBagConstraints.EAST);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(btnSearch, 1, 1, GridBagConstraints.WEST);
-        panelSubComponents.add(btnClear, 1, 1, GridBagConstraints.EAST);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(btnCopy, 2, 1, GridBagConstraints.CENTER);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(btnSelectAll, 1, 1, GridBagConstraints.WEST, new Insets(24, 8, 2, 8));
-        panelSubComponents.add(btnSelectedClear, 1, 1, GridBagConstraints.EAST, new Insets(24, 8, 2, 8));
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(btnDeleteFile, 2, 1, GridBagConstraints.CENTER);
-        panelSubComponents.nextGridY();
-        panelSubComponents.add(chkDelete, 2, 1, GridBagConstraints.WEST);
+        gridBagLayoutUtils.setGridInsets(new Insets(2, 8, 2, 8));
+        gridBagLayoutUtils.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(txtDir, 2, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(btnDir, 2, 1, GridBagConstraints.EAST);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(lblFile, 2, 1, GridBagConstraints.WEST);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(txtFile, 2, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.add(radioWildCard, 1, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(chkCase, 2, 1, GridBagConstraints.EAST);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(btnSearch, 1, 1, GridBagConstraints.WEST);
+        gridBagLayoutUtils.add(btnClear, 1, 1, GridBagConstraints.EAST);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(btnCopy, 2, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(btnSelectAll, 1, 1, GridBagConstraints.WEST, new Insets(24, 8, 2, 8));
+        gridBagLayoutUtils.add(btnSelectedClear, 1, 1, GridBagConstraints.EAST, new Insets(24, 8, 2, 8));
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(btnDeleteFile, 2, 1, GridBagConstraints.CENTER);
+        gridBagLayoutUtils.nextGridY();
+        gridBagLayoutUtils.add(chkDelete, 2, 1, GridBagConstraints.WEST);
 
         // データを設定する
         txtDir.setText(Paths.get(".").toAbsolutePath().getParent().toString());
