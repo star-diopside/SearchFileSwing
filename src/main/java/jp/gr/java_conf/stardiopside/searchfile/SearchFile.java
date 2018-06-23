@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -67,34 +68,20 @@ public class SearchFile extends JFrame implements MenuHintListener {
     private static final Logger logger = Logger.getLogger(SearchFile.class.getName());
     private static final ResourceBundle resource = ResourceBundle.getBundle("messages");
 
-    private JLabel lblDir = new JLabel(resource.getString("label.lblDir"));
-    private JTextField txtDir = new JTextField(21);
-    private JButton btnDir = new JButton(resource.getString("label.btnDir"));
-    private JLabel lblFile = new JLabel(resource.getString("label.lblFile"));
-    private JTextField txtFile = new JTextField(21);
-    private JRadioButton radioRegular = new JRadioButton(resource.getString("label.radioRegular"));
-    private JRadioButton radioWildCard = new JRadioButton(resource.getString("label.radioWildCard"));
-    private JButton btnSearch = new JButton(resource.getString("label.btnSearch.start"));
-    private JButton btnClear = new JButton(resource.getString("label.btnClear"));
-    private JButton btnCopy = new JButton(resource.getString("label.btnCopy"));
-    private JButton btnSelectAll = new JButton(resource.getString("label.btnSelectAll"));
-    private JButton btnSelectedClear = new JButton(resource.getString("label.btnSelectedClear"));
-    private JButton btnDeleteFile = new JButton(resource.getString("label.btnDeleteFile"));
-    private JCheckBox chkDelete = new JCheckBox(resource.getString("label.chkDelete"));
-
-    private JLinkMenu menuFile;
-    private JLinkMenuItem menuFileExit;
-    private JLinkMenu menuChange;
-    private JLinkMenuItem menuChangeCross;
-    private JLinkMenuItem menuChangeSystem;
-
     private Map<String, JRadioButtonMenuItem> lookAndFeelSelectedButtons;
-
     private DefaultListModel<JCheckBox> listFileData = new DefaultListModel<>();
-    private JCheckBoxList listFile = new JCheckBoxList(listFileData);
 
-    private JLabel labelStatusBar = new JLabel();
+    private JCheckBoxList listFile;
+    private JTextField txtDir;
+    private JTextField txtFile;
+    private JRadioButton radioRegular;
+    private JRadioButton radioWildCard;
+    private JButton btnSearch;
+    private JButton btnClear;
+    private JCheckBox chkDelete;
+
     private String strStatusBar = resource.getString("message.initStatusBar");
+    private JLabel labelStatusBar = new JLabel(strStatusBar);
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean isSearching = false;
@@ -116,23 +103,96 @@ public class SearchFile extends JFrame implements MenuHintListener {
     public SearchFile() {
         super(resource.getString("title.searchFile"));
 
+        Arrays.stream(UIManager.getInstalledLookAndFeels()).filter(info -> info.getName().equals("Nimbus")).findFirst()
+                .ifPresent(info -> {
+                    try {
+                        UIManager.setLookAndFeel(info.getClassName());
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                            | UnsupportedLookAndFeelException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        setJMenuBar(menuBar());
         initializeComponents();
-        addMenuBar();
-        addStatusBar();
+        getContentPane().add(statusBar(), BorderLayout.SOUTH);
+
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     /**
-     * コンポーネントの初期化を行う<br>
-     * このメソッドはコンストラクタから呼ばれる
+     * コンポーネントの初期化を行う。
      */
     private void initializeComponents() {
-        /*
-         * 複数のコンポーネントを含むパネルのコントロールの設定
-         */
+        // listFile
+        listFile = new JCheckBoxList(listFileData);
+
+        // lblDir
+        JLabel lblDir = new JLabel(resource.getString("label.lblDir"));
+
+        // txtDir
+        txtDir = new JTextField(21);
+        txtDir.setText(Paths.get(".").toAbsolutePath().getParent().toString());
+
+        // btnDir
+        JButton btnDir = new JButton(resource.getString("label.btnDir"));
+        btnDir.setToolTipText(resource.getString("toolTip.btnDir"));
+        btnDir.addActionListener(this::onChooseDirectory);
+
+        // lblFile
+        JLabel lblFile = new JLabel(resource.getString("label.lblFile"));
+
+        // txtFile
+        txtFile = new JTextField(21);
+
+        // radioRegular
+        radioRegular = new JRadioButton(resource.getString("label.radioRegular"));
+
+        // radioWildCard
+        radioWildCard = new JRadioButton(resource.getString("label.radioWildCard"));
+        radioWildCard.setSelected(true);
+
+        // btnSearch
+        btnSearch = new JButton(resource.getString("label.btnSearch.start"));
+        btnSearch.setToolTipText(resource.getString("toolTip.btnSearch"));
+        btnSearch.addActionListener(this::onSearch);
+
+        // btnClear
+        btnClear = new JButton(resource.getString("label.btnClear"));
+        btnClear.setToolTipText(resource.getString("toolTip.btnClear"));
+        btnClear.addActionListener(this::onClearResults);
+
+        // btnCopy
+        JButton btnCopy = new JButton(resource.getString("label.btnCopy"));
+        btnCopy.setToolTipText(resource.getString("toolTip.btnCopy"));
+        btnCopy.addActionListener(this::onCopyResults);
+
+        // btnSelectAll
+        JButton btnSelectAll = new JButton(resource.getString("label.btnSelectAll"));
+        btnSelectAll.setToolTipText(resource.getString("toolTip.btnSelectAll"));
+        btnSelectAll.addActionListener(this::onSelectAll);
+
+        // btnSelectedClear
+        JButton btnSelectedClear = new JButton(resource.getString("label.btnSelectedClear"));
+        btnSelectedClear.setToolTipText(resource.getString("toolTip.btnSelectedClear"));
+        btnSelectedClear.addActionListener(this::onClearSelection);
+
+        // btnDeleteFile
+        JButton btnDeleteFile = new JButton(resource.getString("label.btnDeleteFile"));
+        btnDeleteFile.setToolTipText(resource.getString("toolTip.btnDeleteFile"));
+        btnDeleteFile.addActionListener(this::onDeleteSelectedFile);
+
+        // chkDelete
+        chkDelete = new JCheckBox(resource.getString("label.chkDelete"));
+
+        // グループ設定
+        ButtonGroup groupRadio = new ButtonGroup();
+        groupRadio.add(radioWildCard);
+        groupRadio.add(radioRegular);
+
+        // panelSubComponents
         JPanel panelSubComponents = new JPanel();
         GridBagLayoutUtils gridBagLayoutUtils = new GridBagLayoutUtils(panelSubComponents);
-
-        // コンポーネントを追加する
         gridBagLayoutUtils.setGridInsets(new Insets(2, 8, 2, 8));
         gridBagLayoutUtils.add(lblDir, 2, 1, GridBagConstraints.WEST, new Insets(8, 8, 2, 8));
         gridBagLayoutUtils.nextGridY();
@@ -159,87 +219,55 @@ public class SearchFile extends JFrame implements MenuHintListener {
         gridBagLayoutUtils.nextGridY();
         gridBagLayoutUtils.add(chkDelete, 2, 1, GridBagConstraints.WEST);
 
-        // データを設定する
-        txtDir.setText(Paths.get(".").toAbsolutePath().getParent().toString());
-
-        // グループと初期状態を設定する
-        ButtonGroup groupRadio = new ButtonGroup();
-        groupRadio.add(radioWildCard);
-        groupRadio.add(radioRegular);
-        radioWildCard.setSelected(true);
-
-        // アクションリスナーを追加する
-        btnDir.addActionListener(this::onChooseDirectory);
-        btnSearch.addActionListener(this::onSearch);
-        btnClear.addActionListener(this::onClearResults);
-        btnCopy.addActionListener(this::onCopyResults);
-        btnSelectAll.addActionListener(this::onSelectAll);
-        btnSelectedClear.addActionListener(this::onClearSelection);
-        btnDeleteFile.addActionListener(this::onDeleteSelectedFile);
-
-        // ツールチップを設定する
-        btnDir.setToolTipText(resource.getString("toolTip.btnDir"));
-        btnSearch.setToolTipText(resource.getString("toolTip.btnSearch"));
-        btnClear.setToolTipText(resource.getString("toolTip.btnClear"));
-        btnCopy.setToolTipText(resource.getString("toolTip.btnCopy"));
-        btnSelectAll.setToolTipText(resource.getString("toolTip.btnSelectAll"));
-        btnSelectedClear.setToolTipText(resource.getString("toolTip.btnSelectedClear"));
-        btnDeleteFile.setToolTipText(resource.getString("toolTip.btnDeleteFile"));
-
-        // デフォルトのボタンの設定
-        getRootPane().setDefaultButton(btnSearch);
-
+        // panelComponents
         JPanel panelComponents = new JPanel();
         panelComponents.setLayout(new BorderLayout());
         panelComponents.add(panelSubComponents, BorderLayout.NORTH);
 
-        /*
-         * リストコントロールの設定
-         */
+        // scrollList
         JScrollPane scrollList = new JScrollPane(listFile);
         scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        /*
-         * 左右のパネルを配置
-         */
+        // デフォルトのボタンの設定
+        getRootPane().setDefaultButton(btnSearch);
+
+        // パネル配置
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(panelComponents, BorderLayout.EAST);
         getContentPane().add(scrollList, BorderLayout.CENTER);
     }
 
     /**
-     * メニューバーの設定を行う このメソッドはコンストラクタから呼ばれる
+     * メニューバーのコンポーネントを生成する。
+     * 
+     * @return {@link JMenuBar} コンポーネント
      */
-    private void addMenuBar() {
+    private JMenuBar menuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        /*
-         * ファイルメニューの設定
-         */
-        menuFile = new JLinkMenu(resource.getString("label.menuFile"), this);
+        // ファイルメニュー
+        JLinkMenu menuFile = new JLinkMenu(resource.getString("label.menuFile"), this);
         menuFile.setMnemonic(KeyEvent.VK_F);
-        menuFileExit = new JLinkMenuItem(resource.getString("label.menuFileExit"), this);
+        JLinkMenuItem menuFileExit = new JLinkMenuItem(resource.getString("label.menuFileExit"), this);
         menuFileExit.setMnemonic(KeyEvent.VK_X);
         menuFileExit.setHint(resource.getString("hint.menuFileExit"));
         menuFile.add(menuFileExit);
         menuFileExit.addActionListener(e -> System.exit(0));
         menuBar.add(menuFile);
 
-        /*
-         * Look & Feel メニューの設定
-         */
-        menuChange = new JLinkMenu(resource.getString("label.menuChange"), this);
+        // ルックアンドフィールメニュー
+        JLinkMenu menuChange = new JLinkMenu(resource.getString("label.menuChange"), this);
         menuChange.setMnemonic(KeyEvent.VK_L);
         menuChange.setHint(resource.getString("hint.menuChange"));
 
-        menuChangeCross = new JLinkMenuItem(new ChangeLookAndFeelAction(
+        JLinkMenuItem menuChangeCross = new JLinkMenuItem(new ChangeLookAndFeelAction(
                 UIManager.getCrossPlatformLookAndFeelClassName(), resource.getString("label.menuChangeCross")), this);
         menuChangeCross.setMnemonic(KeyEvent.VK_C);
         menuChangeCross.setHint(resource.getString("hint.menuChangeCross"));
         menuChange.add(menuChangeCross);
 
-        menuChangeSystem = new JLinkMenuItem(new ChangeLookAndFeelAction(UIManager.getSystemLookAndFeelClassName(),
-                resource.getString("label.menuChangeSystem")), this);
+        JLinkMenuItem menuChangeSystem = new JLinkMenuItem(new ChangeLookAndFeelAction(
+                UIManager.getSystemLookAndFeelClassName(), resource.getString("label.menuChangeSystem")), this);
         menuChangeSystem.setMnemonic(KeyEvent.VK_S);
         menuChangeSystem.setHint(resource.getString("hint.menuChangeSystem"));
         menuChange.add(menuChangeSystem);
@@ -249,15 +277,16 @@ public class SearchFile extends JFrame implements MenuHintListener {
         ButtonGroup groupLAF = new ButtonGroup();
         Map<String, JRadioButtonMenuItem> menuItems = new HashMap<>();
 
+        MessageFormat formatLabelLAF = new MessageFormat(resource.getString("label.menuChangeLookAndFeel"));
+        MessageFormat formatHintLAF = new MessageFormat(resource.getString("hint.menuChangeLookAndFeel"));
+
         for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            JLinkRadioButtonMenuItem item = new JLinkRadioButtonMenuItem(
-                    new ChangeLookAndFeelAction(info.getClassName(),
-                            MessageFormat.format(resource.getString("label.menuChangeLookAndFeel"), info.getName())),
-                    this);
+            JLinkRadioButtonMenuItem item = new JLinkRadioButtonMenuItem(new ChangeLookAndFeelAction(
+                    info.getClassName(), formatLabelLAF.format(new Object[] { info.getName() })), this);
             if (!info.getName().isEmpty()) {
                 item.setMnemonic(info.getName().charAt(0));
             }
-            item.setHint(MessageFormat.format(resource.getString("hint.menuChangeLookAndFeel"), info.getName()));
+            item.setHint(formatHintLAF.format(new Object[] { info.getName() }));
             menuChange.add(item);
             groupLAF.add(item);
             menuItems.put(info.getClassName(), item);
@@ -274,38 +303,32 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         menuBar.add(menuChange);
 
-        setJMenuBar(menuBar);
+        return menuBar;
     }
 
     /**
-     * ステータスバーの設定を行う<br>
-     * このメソッドはコンストラクタから呼ばれる
+     * ステータスバーのコンポーネントを生成する。
+     * 
+     * @return ステータスバーの {@link JPanel} コンポーネント
      */
-    private void addStatusBar() {
-        // パネルのインスタンスを生成する
-        JPanel panelStatusBar = new JPanel();
-        JPanel[] panelStatusItems = new JPanel[2];
-        for (int i = 0; i < panelStatusItems.length; i++) {
-            panelStatusItems[i] = new JPanel();
-        }
+    private JPanel statusBar() {
+        JPanel panelStatusMessage = new JPanel();
+        panelStatusMessage.setLayout(new BorderLayout());
+        panelStatusMessage.setBorder(new CompoundBorder(new LineBorder(Color.GRAY), new EmptyBorder(2, 6, 2, 6)));
+        panelStatusMessage.add(labelStatusBar, BorderLayout.CENTER);
 
-        // パネルの配置を行う
+        JPanel panelStatusOS = new JPanel();
+        panelStatusOS.setLayout(new BorderLayout());
+        panelStatusOS.setBorder(new CompoundBorder(new LineBorder(Color.GRAY), new EmptyBorder(2, 6, 2, 6)));
+        panelStatusOS.add(new JLabel(System.getProperty("os.name")), BorderLayout.CENTER);
+
+        JPanel panelStatusBar = new JPanel();
         panelStatusBar.setLayout(new BorderLayout(2, 2));
         panelStatusBar.setBorder(new EmptyBorder(2, 0, 0, 0));
-        for (int i = 0; i < panelStatusItems.length; i++) {
-            panelStatusItems[i].setLayout(new BorderLayout());
-            panelStatusItems[i].setBorder(new CompoundBorder(new LineBorder(Color.GRAY), new EmptyBorder(2, 6, 2, 6)));
-        }
-        panelStatusBar.add(panelStatusItems[0], BorderLayout.CENTER);
-        panelStatusBar.add(panelStatusItems[1], BorderLayout.EAST);
-        getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
+        panelStatusBar.add(panelStatusMessage, BorderLayout.CENTER);
+        panelStatusBar.add(panelStatusOS, BorderLayout.EAST);
 
-        // 各パネルアイテムの設定を行う
-        labelStatusBar.setText(strStatusBar);
-        panelStatusItems[0].add(labelStatusBar, BorderLayout.CENTER);
-
-        String nameOS = System.getProperty("os.name");
-        panelStatusItems[1].add(new JLabel(nameOS), BorderLayout.CENTER);
+        return panelStatusBar;
     }
 
     /**
