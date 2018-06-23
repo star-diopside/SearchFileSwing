@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -18,11 +20,15 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -454,6 +460,14 @@ public class SearchFile extends JFrame implements MenuHintListener {
     }
 
     private void onCopyResults(ActionEvent e) {
+        String result = StreamSupport
+                .stream(Spliterators.spliterator(listFileData.elements().asIterator(), listFileData.size(),
+                        Spliterator.NONNULL), false)
+                .map(JCheckBox::getText)
+                .collect(Collectors.joining(System.lineSeparator(), "", System.lineSeparator()));
+        StringSelection selection = new StringSelection(result);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+        setStatusBarText(listFileData.size() + "個のファイル名をコピーしました");
     }
 
     /**
