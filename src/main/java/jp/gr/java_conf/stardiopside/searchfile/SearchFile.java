@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.swing.AbstractAction;
@@ -451,23 +451,28 @@ public class SearchFile extends JFrame implements MenuHintListener {
     }
 
     private void onSelectAll(ActionEvent e) {
+        stream(listFileData).forEach(c -> c.setSelected(true));
+        listFile.repaint();
     }
 
     private void onClearSelection(ActionEvent e) {
+        stream(listFileData).forEach(c -> c.setSelected(false));
+        listFile.repaint();
     }
 
     private void onDeleteSelectionFile(ActionEvent e) {
     }
 
     private void onCopyResults(ActionEvent e) {
-        String result = StreamSupport
-                .stream(Spliterators.spliterator(listFileData.elements().asIterator(), listFileData.size(),
-                        Spliterator.NONNULL), false)
-                .map(JCheckBox::getText)
+        String result = stream(listFileData).map(JCheckBox::getText)
                 .collect(Collectors.joining(System.lineSeparator(), "", System.lineSeparator()));
         StringSelection selection = new StringSelection(result);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
         setStatusBarText(listFileData.size() + "個のファイル名をコピーしました");
+    }
+
+    private static <T> Stream<T> stream(DefaultListModel<T> list) {
+        return StreamSupport.stream(Spliterators.spliterator(list.elements().asIterator(), list.size(), 0), false);
     }
 
     /**
