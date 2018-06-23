@@ -184,6 +184,10 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         // chkDelete
         chkDelete = new JCheckBox(resource.getString("label.chkDelete"));
+        if (!Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+            chkDelete.setSelected(false);
+            chkDelete.setVisible(false);
+        }
 
         // グループ設定
         ButtonGroup groupRadio = new ButtonGroup();
