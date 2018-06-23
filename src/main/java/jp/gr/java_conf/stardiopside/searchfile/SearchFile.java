@@ -19,9 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Spliterators;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -63,21 +65,22 @@ import javax.swing.border.LineBorder;
 @SuppressWarnings("serial")
 public class SearchFile extends JFrame implements MenuHintListener {
     private static final Logger logger = Logger.getLogger(SearchFile.class.getName());
+    private static final ResourceBundle resource = ResourceBundle.getBundle("messages");
 
-    private JLabel lblDir = new JLabel("ディレクトリ名");
+    private JLabel lblDir = new JLabel(resource.getString("label.lblDir"));
     private JTextField txtDir = new JTextField(21);
-    private JButton btnDir = new JButton("ディレクトリの指定");
-    private JLabel lblFile = new JLabel("ファイル名");
+    private JButton btnDir = new JButton(resource.getString("label.btnDir"));
+    private JLabel lblFile = new JLabel(resource.getString("label.lblFile"));
     private JTextField txtFile = new JTextField(21);
-    private JRadioButton radioRegular = new JRadioButton("正規表現");
-    private JRadioButton radioWildCard = new JRadioButton("ワイルドカード");
-    private JButton btnSearch = new JButton("検索開始");
-    private JButton btnClear = new JButton("リストのクリア");
-    private JButton btnCopy = new JButton("検索結果をクリップボードにコピー");
-    private JButton btnSelectAll = new JButton("すべて選択");
-    private JButton btnSelectedClear = new JButton("選択解除");
-    private JButton btnDeleteFile = new JButton("選択ファイルを削除");
-    private JCheckBox chkDelete = new JCheckBox("削除時にファイルをごみ箱に移す");
+    private JRadioButton radioRegular = new JRadioButton(resource.getString("label.radioRegular"));
+    private JRadioButton radioWildCard = new JRadioButton(resource.getString("label.radioWildCard"));
+    private JButton btnSearch = new JButton(resource.getString("label.btnSearch.start"));
+    private JButton btnClear = new JButton(resource.getString("label.btnClear"));
+    private JButton btnCopy = new JButton(resource.getString("label.btnCopy"));
+    private JButton btnSelectAll = new JButton(resource.getString("label.btnSelectAll"));
+    private JButton btnSelectedClear = new JButton(resource.getString("label.btnSelectedClear"));
+    private JButton btnDeleteFile = new JButton(resource.getString("label.btnDeleteFile"));
+    private JCheckBox chkDelete = new JCheckBox(resource.getString("label.chkDelete"));
 
     private JLinkMenu menuFile;
     private JLinkMenuItem menuFileExit;
@@ -91,14 +94,14 @@ public class SearchFile extends JFrame implements MenuHintListener {
     private JCheckBoxList listFile = new JCheckBoxList(listFileData);
 
     private JLabel labelStatusBar = new JLabel();
-    private String strStatusBar = "レディ";
+    private String strStatusBar = resource.getString("message.initStatusBar");
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean isSearching = false;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SearchFile frame = new SearchFile("ファイルの検索");
+            SearchFile frame = new SearchFile();
 
             // ウィンドウの大きさと終了動作の設定
             frame.setLocation(10, 10);
@@ -110,8 +113,8 @@ public class SearchFile extends JFrame implements MenuHintListener {
         });
     }
 
-    public SearchFile(String title) {
-        super(title);
+    public SearchFile() {
+        super(resource.getString("title.searchFile"));
 
         initializeComponents();
         addMenuBar();
@@ -175,13 +178,13 @@ public class SearchFile extends JFrame implements MenuHintListener {
         btnDeleteFile.addActionListener(this::onDeleteSelectedFile);
 
         // ツールチップを設定する
-        btnDir.setToolTipText("検索するディレクトリを指定する");
-        btnSearch.setToolTipText("検索を開始する");
-        btnClear.setToolTipText("検索結果をクリアする");
-        btnCopy.setToolTipText("検索結果をクリップボードにコピーする");
-        btnSelectAll.setToolTipText("リストを全選択状態にする");
-        btnSelectedClear.setToolTipText("リストの選択状態を解除する");
-        btnDeleteFile.setToolTipText("選択されたファイルを削除する");
+        btnDir.setToolTipText(resource.getString("toolTip.btnDir"));
+        btnSearch.setToolTipText(resource.getString("toolTip.btnSearch"));
+        btnClear.setToolTipText(resource.getString("toolTip.btnClear"));
+        btnCopy.setToolTipText(resource.getString("toolTip.btnCopy"));
+        btnSelectAll.setToolTipText(resource.getString("toolTip.btnSelectAll"));
+        btnSelectedClear.setToolTipText(resource.getString("toolTip.btnSelectedClear"));
+        btnDeleteFile.setToolTipText(resource.getString("toolTip.btnDeleteFile"));
 
         // デフォルトのボタンの設定
         getRootPane().setDefaultButton(btnSearch);
@@ -213,11 +216,11 @@ public class SearchFile extends JFrame implements MenuHintListener {
         /*
          * ファイルメニューの設定
          */
-        menuFile = new JLinkMenu("ファイル(F)", this);
+        menuFile = new JLinkMenu(resource.getString("label.menuFile"), this);
         menuFile.setMnemonic(KeyEvent.VK_F);
-        menuFileExit = new JLinkMenuItem("アプリケーションの終了(X)", this);
+        menuFileExit = new JLinkMenuItem(resource.getString("label.menuFileExit"), this);
         menuFileExit.setMnemonic(KeyEvent.VK_X);
-        menuFileExit.setHint("アプリケーションを終了する");
+        menuFileExit.setHint(resource.getString("hint.menuFileExit"));
         menuFile.add(menuFileExit);
         menuFileExit.addActionListener(e -> System.exit(0));
         menuBar.add(menuFile);
@@ -225,20 +228,20 @@ public class SearchFile extends JFrame implements MenuHintListener {
         /*
          * Look & Feel メニューの設定
          */
-        menuChange = new JLinkMenu("Look & Feel", this);
+        menuChange = new JLinkMenu(resource.getString("label.menuChange"), this);
         menuChange.setMnemonic(KeyEvent.VK_L);
-        menuChange.setHint("アプリケーションの外観の変更を行う");
+        menuChange.setHint(resource.getString("hint.menuChange"));
 
-        menuChangeCross = new JLinkMenuItem(
-                new ChangeLookAndFeelAction(UIManager.getCrossPlatformLookAndFeelClassName(), "クロスプラットフォーム(C)"), this);
+        menuChangeCross = new JLinkMenuItem(new ChangeLookAndFeelAction(
+                UIManager.getCrossPlatformLookAndFeelClassName(), resource.getString("label.menuChangeCross")), this);
         menuChangeCross.setMnemonic(KeyEvent.VK_C);
-        menuChangeCross.setHint("クロスプラットフォームのルックアンドフィールを適用する");
+        menuChangeCross.setHint(resource.getString("hint.menuChangeCross"));
         menuChange.add(menuChangeCross);
 
-        menuChangeSystem = new JLinkMenuItem(
-                new ChangeLookAndFeelAction(UIManager.getSystemLookAndFeelClassName(), "システムプラットフォーム(S)"), this);
+        menuChangeSystem = new JLinkMenuItem(new ChangeLookAndFeelAction(UIManager.getSystemLookAndFeelClassName(),
+                resource.getString("label.menuChangeSystem")), this);
         menuChangeSystem.setMnemonic(KeyEvent.VK_S);
-        menuChangeSystem.setHint("OSのルックアンドフィールを適用する");
+        menuChangeSystem.setHint(resource.getString("hint.menuChangeSystem"));
         menuChange.add(menuChangeSystem);
 
         menuChange.addSeparator();
@@ -248,11 +251,13 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             JLinkRadioButtonMenuItem item = new JLinkRadioButtonMenuItem(
-                    new ChangeLookAndFeelAction(info.getClassName(), info.getName()), this);
+                    new ChangeLookAndFeelAction(info.getClassName(),
+                            MessageFormat.format(resource.getString("label.menuChangeLookAndFeel"), info.getName())),
+                    this);
             if (!info.getName().isEmpty()) {
                 item.setMnemonic(info.getName().charAt(0));
             }
-            item.setHint(info.getName() + "ルックアンドフィールを適用する");
+            item.setHint(MessageFormat.format(resource.getString("hint.menuChangeLookAndFeel"), info.getName()));
             menuChange.add(item);
             groupLAF.add(item);
             menuItems.put(info.getClassName(), item);
@@ -312,9 +317,9 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         // コンポーネントの状態を変える
         if (isSearching) {
-            btnSearch.setText("検索中止");
+            btnSearch.setText(resource.getString("label.btnSearch.stop"));
         } else {
-            btnSearch.setText("検索開始");
+            btnSearch.setText(resource.getString("label.btnSearch.start"));
             btnSearch.setEnabled(true);
         }
         btnClear.setEnabled(!isSearching);
@@ -359,7 +364,8 @@ public class SearchFile extends JFrame implements MenuHintListener {
         // 指定されたディレクトリが存在するかを調べる
         Path fileDir = Paths.get(txtDir.getText());
         if (!Files.isDirectory(fileDir)) {
-            setStatusBarText("ディレクトリが存在しません");
+            JOptionPane.showMessageDialog(this, resource.getString("message.directoryNotFound"),
+                    resource.getString("title.errorDialog"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -377,74 +383,81 @@ public class SearchFile extends JFrame implements MenuHintListener {
             pathMatcher = FileSystems.getDefault().getPathMatcher(syntax + txtFile.getText());
         } catch (PatternSyntaxException ex) {
             logger.log(Level.FINE, ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this, "検索条件にエラーがあります", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, resource.getString("message.searchConditionError"),
+                    resource.getString("title.errorDialog"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if (listFileData.getSize() == 0 || JOptionPane.showConfirmDialog(this, "検索結果は消去されます。処理を続行してもよろしいですか？", "リストの消去",
-                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            // 現在のリストをクリアする
-            listFileData.clear();
-
-            // 検索中を示すフラグを立てる
-            setSearchingFlag(true);
-
-            // 別スレッドで検索を開始する
-            executorService.submit(() -> {
-                try {
-                    Files.walkFileTree(fileDir, new FileVisitor<>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                                throws IOException {
-                            SwingUtilities.invokeLater(() -> setStatusBarText(dir + " を検索中..."));
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            if (pathMatcher.matches(file.getFileName())) {
-                                SwingUtilities.invokeLater(
-                                        () -> listFileData.addElement(new JCheckBox(file.toAbsolutePath().toString())));
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                            logger.log(Level.WARNING, exc.getMessage(), exc);
-                            return FileVisitResult.CONTINUE;
-                        };
-
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException attrs) throws IOException {
-                            return isSearching ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
-                        }
-                    });
-
-                    SwingUtilities.invokeLater(() -> {
-                        if (listFileData.isEmpty()) {
-                            setStatusBarText("ファイルが見つかりませんでした");
-                        } else {
-                            setStatusBarText(listFileData.size() + "個のファイルが見つかりました");
-                        }
-                    });
-                } catch (IOException ex) {
-                    logger.log(Level.WARNING, ex.getMessage(), ex);
-                    SwingUtilities.invokeLater(() -> setStatusBarText("ファイル検索中にエラーが発生しました"));
-                } finally {
-                    // 検索中を示すフラグを降ろす
-                    SwingUtilities.invokeLater(() -> setSearchingFlag(false));
-                }
-            });
+        if (!listFileData.isEmpty()
+                && JOptionPane.showConfirmDialog(this, resource.getString("message.clearResultConfirmDialog"),
+                        resource.getString("title.clearResultConfirmDialog"),
+                        JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
         }
+
+        // 現在のリストをクリアする
+        listFileData.clear();
+
+        // 検索中を示すフラグを立てる
+        setSearchingFlag(true);
+
+        // 別スレッドで検索を開始する
+        executorService.submit(() -> {
+            try {
+                Files.walkFileTree(fileDir, new FileVisitor<>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        SwingUtilities.invokeLater(() -> setStatusBarText(
+                                MessageFormat.format(resource.getString("message.searchingDirectory"), dir)));
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (pathMatcher.matches(file.getFileName())) {
+                            SwingUtilities.invokeLater(
+                                    () -> listFileData.addElement(new JCheckBox(file.toAbsolutePath().toString())));
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        logger.log(Level.WARNING, exc.getMessage(), exc);
+                        return FileVisitResult.CONTINUE;
+                    };
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException attrs) throws IOException {
+                        return isSearching ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
+                    }
+                });
+
+                SwingUtilities.invokeLater(() -> {
+                    if (listFileData.isEmpty()) {
+                        setStatusBarText(resource.getString("message.searchResult.empty"));
+                    } else {
+                        setStatusBarText(MessageFormat.format(resource.getString("message.searchResult.found"),
+                                listFileData.size()));
+                    }
+                });
+            } catch (IOException ex) {
+                logger.log(Level.WARNING, ex.getMessage(), ex);
+                SwingUtilities.invokeLater(() -> setStatusBarText(resource.getString("message.searchResult.error")));
+            } finally {
+                // 検索中を示すフラグを降ろす
+                SwingUtilities.invokeLater(() -> setSearchingFlag(false));
+            }
+        });
     }
 
     private void onClearResults(ActionEvent e) {
-        if (JOptionPane.showConfirmDialog(this, "検索結果は消去されます。処理を続行してもよろしいですか？", "リストの消去",
+        if (JOptionPane.showConfirmDialog(this, resource.getString("message.clearResultConfirmDialog"),
+                resource.getString("title.clearResultConfirmDialog"),
                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             // リストを初期化する
             listFileData.clear();
-            setStatusBarText("リストを初期化しました");
+            setStatusBarText(resource.getString("message.clearResults"));
         }
     }
 
@@ -459,8 +472,9 @@ public class SearchFile extends JFrame implements MenuHintListener {
     }
 
     private void onDeleteSelectedFile(ActionEvent e) {
-        String message = chkDelete.isSelected() ? "選択されたファイルをごみ箱に移動します。よろしいですか？" : "選択されたファイルを削除します。よろしいですか？";
-        if (JOptionPane.showConfirmDialog(this, message, "ファイルの削除",
+        String messageKey = chkDelete.isSelected() ? "moveToTrash" : "delete";
+        if (JOptionPane.showConfirmDialog(this, resource.getString("message.deleteFileConfirmDialog." + messageKey),
+                resource.getString("title.deleteFileConfirmDialog"),
                 JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
             return;
         }
@@ -494,14 +508,13 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         deletedFiles.forEach(listFileData::removeElement);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(deletedFiles.size());
-        sb.append("個のファイルを削除しました。");
+        String resultMessage = MessageFormat.format(resource.getString("message.deleteSelectedFile.success"),
+                deletedFiles.size());
         if (!errorFiles.isEmpty()) {
-            sb.append(errorFiles.size());
-            sb.append("個のファイルは削除できませんでした。");
+            resultMessage += MessageFormat.format(resource.getString("message.deleteSelectedFile.error"),
+                    errorFiles.size());
         }
-        setStatusBarText(sb.toString());
+        setStatusBarText(resultMessage);
     }
 
     private void onCopyResults(ActionEvent e) {
@@ -509,7 +522,7 @@ public class SearchFile extends JFrame implements MenuHintListener {
                 .collect(Collectors.joining(System.lineSeparator(), "", System.lineSeparator()));
         StringSelection selection = new StringSelection(result);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
-        setStatusBarText(listFileData.size() + "個のファイル名をコピーしました");
+        setStatusBarText(MessageFormat.format(resource.getString("message.copyResults"), listFileData.size()));
     }
 
     private static <T> Stream<T> stream(DefaultListModel<T> list) {
