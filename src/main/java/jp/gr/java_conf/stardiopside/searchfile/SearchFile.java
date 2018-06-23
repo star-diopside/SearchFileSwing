@@ -2,6 +2,7 @@ package jp.gr.java_conf.stardiopside.searchfile;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Spliterators;
@@ -173,7 +175,7 @@ public class SearchFile extends JFrame implements MenuHintListener {
         btnCopy.addActionListener(this::onCopyResults);
         btnSelectAll.addActionListener(this::onSelectAll);
         btnSelectedClear.addActionListener(this::onClearSelection);
-        btnDeleteFile.addActionListener(this::onDeleteSelectionFile);
+        btnDeleteFile.addActionListener(this::onDeleteSelectedFile);
 
         // ツールチップを設定する
         btnDir.setToolTipText("検索するディレクトリを指定する");
@@ -460,7 +462,50 @@ public class SearchFile extends JFrame implements MenuHintListener {
         listFile.repaint();
     }
 
-    private void onDeleteSelectionFile(ActionEvent e) {
+    private void onDeleteSelectedFile(ActionEvent e) {
+        String message = chkDelete.isSelected() ? "選択されたファイルをごみ箱に移動します。よろしいですか？" : "選択されたファイルを削除します。よろしいですか？";
+        if (JOptionPane.showConfirmDialog(this, message, "ファイルの削除",
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        ArrayList<JCheckBox> deletedFiles = new ArrayList<>();
+        ArrayList<JCheckBox> errorFiles = new ArrayList<>();
+        Stream<JCheckBox> selectedFiles = stream(listFileData).filter(JCheckBox::isSelected);
+
+        if (chkDelete.isSelected()) {
+            Desktop desktop = Desktop.getDesktop();
+            selectedFiles.forEach(c -> {
+                File file = new File(c.getText());
+                if (desktop.moveToTrash(file)) {
+                    deletedFiles.add(c);
+                } else {
+                    errorFiles.add(c);
+                }
+            });
+        } else {
+            selectedFiles.forEach(c -> {
+                try {
+                    Path path = Paths.get(c.getText());
+                    Files.delete(path);
+                    deletedFiles.add(c);
+                } catch (IOException ex) {
+                    logger.log(Level.WARNING, ex.getMessage(), ex);
+                    errorFiles.add(c);
+                }
+            });
+        }
+
+        deletedFiles.forEach(listFileData::removeElement);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(deletedFiles.size());
+        sb.append("個のファイルを削除しました。");
+        if (!errorFiles.isEmpty()) {
+            sb.append(errorFiles.size());
+            sb.append("個のファイルは削除できませんでした。");
+        }
+        setStatusBarText(sb.toString());
     }
 
     private void onCopyResults(ActionEvent e) {
