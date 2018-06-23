@@ -71,7 +71,6 @@ public class SearchFile extends JFrame implements MenuHintListener {
     private JTextField txtFile = new JTextField(21);
     private JRadioButton radioRegular = new JRadioButton("正規表現");
     private JRadioButton radioWildCard = new JRadioButton("ワイルドカード");
-    private JCheckBox chkCase = new JCheckBox("大文字/小文字の区別を行う");
     private JButton btnSearch = new JButton("検索開始");
     private JButton btnClear = new JButton("リストのクリア");
     private JButton btnCopy = new JButton("検索結果をクリップボードにコピー");
@@ -142,10 +141,8 @@ public class SearchFile extends JFrame implements MenuHintListener {
         gridBagLayoutUtils.nextGridY();
         gridBagLayoutUtils.add(txtFile, 2, 1, GridBagConstraints.CENTER);
         gridBagLayoutUtils.nextGridY();
-        gridBagLayoutUtils.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
         gridBagLayoutUtils.add(radioWildCard, 1, 1, GridBagConstraints.CENTER);
-        gridBagLayoutUtils.nextGridY();
-        gridBagLayoutUtils.add(chkCase, 2, 1, GridBagConstraints.EAST);
+        gridBagLayoutUtils.add(radioRegular, 1, 1, GridBagConstraints.CENTER);
         gridBagLayoutUtils.nextGridY();
         gridBagLayoutUtils.add(btnSearch, 1, 1, GridBagConstraints.WEST);
         gridBagLayoutUtils.add(btnClear, 1, 1, GridBagConstraints.EAST);
@@ -164,9 +161,9 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         // グループと初期状態を設定する
         ButtonGroup groupRadio = new ButtonGroup();
-        groupRadio.add(radioRegular);
         groupRadio.add(radioWildCard);
-        radioRegular.setSelected(true);
+        groupRadio.add(radioRegular);
+        radioWildCard.setSelected(true);
 
         // アクションリスナーを追加する
         btnDir.addActionListener(this::onChooseDirectory);
@@ -179,7 +176,6 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         // ツールチップを設定する
         btnDir.setToolTipText("検索するディレクトリを指定する");
-        chkCase.setToolTipText("ファイル名の大文字/小文字を区別して検索を行う");
         btnSearch.setToolTipText("検索を開始する");
         btnClear.setToolTipText("検索結果をクリアする");
         btnCopy.setToolTipText("検索結果をクリップボードにコピーする");
