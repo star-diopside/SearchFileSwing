@@ -488,10 +488,13 @@ public class SearchFile extends JFrame implements MenuHintListener {
                     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
                         logger.log(Level.WARNING, exc.getMessage(), exc);
                         return FileVisitResult.CONTINUE;
-                    };
+                    }
 
                     @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException attrs) throws IOException {
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        if (exc != null) {
+                            logger.log(Level.WARNING, exc.getMessage(), exc);
+                        }
                         return isSearching ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
                     }
                 });
