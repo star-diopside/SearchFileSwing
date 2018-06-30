@@ -434,21 +434,26 @@ public class SearchFile extends JFrame implements MenuHintListener {
 
         // パス照合処理を設定する
         PathMatcher pathMatcher;
-        try {
-            String syntax;
-            if (radioRegular.isSelected()) {
-                syntax = "regex:";
-            } else if (radioWildCard.isSelected()) {
-                syntax = "glob:";
-            } else {
-                throw new IllegalStateException();
+
+        if (textFile.getText().isEmpty()) {
+            pathMatcher = path -> true;
+        } else {
+            try {
+                String syntax;
+                if (radioRegular.isSelected()) {
+                    syntax = "regex:";
+                } else if (radioWildCard.isSelected()) {
+                    syntax = "glob:";
+                } else {
+                    throw new IllegalStateException();
+                }
+                pathMatcher = FileSystems.getDefault().getPathMatcher(syntax + textFile.getText());
+            } catch (PatternSyntaxException ex) {
+                logger.log(Level.FINE, ex.getMessage(), ex);
+                JOptionPane.showMessageDialog(this, resource.getString("message.searchConditionError"),
+                        resource.getString("title.errorDialog"), JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            pathMatcher = FileSystems.getDefault().getPathMatcher(syntax + textFile.getText());
-        } catch (PatternSyntaxException ex) {
-            logger.log(Level.FINE, ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this, resource.getString("message.searchConditionError"),
-                    resource.getString("title.errorDialog"), JOptionPane.ERROR_MESSAGE);
-            return;
         }
 
         if (!searchResult.isEmpty()
